@@ -154,6 +154,7 @@
                         vagaLink.appendChild(vagaDiv);
                         grid.appendChild(vagaLink);
                     });
+
                 }
 
                 function popularEmpresas() {
@@ -169,14 +170,19 @@
 
                 function aplicarPaginacao(listaCompleta) {
                     const totalVagas = listaCompleta.length;
-                    const inicio = paginaAtual * itensPorPagina;
-                    const fim = inicio + itensPorPagina;
-                    
+
                     // Cálculo de quantos itens estão sendo exibidos (ex: 12/500, 24/500)
                     // Usamos Math.min para não mostrar um número maior que o total na última página
-                    const exibidosAteAgora = Math.min(fim, totalVagas);
+                    
                     const totalPaginas = Math.ceil(totalVagas / itensPorPagina) || 1;
 
+                    if (paginaAtual >= totalPaginas) {
+                        paginaAtual = 0;
+                    }
+                    
+                    const inicio = paginaAtual * itensPorPagina;
+                    const fim = inicio + itensPorPagina;
+                    const exibidosAteAgora = Math.min(fim, totalVagas);
                     // 1. Atualiza o contador do topo (ex: 12 / 500)
                     const contadorTopo = document.getElementById('contadorTopo');
                     if (contadorTopo) {

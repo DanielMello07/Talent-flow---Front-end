@@ -42,6 +42,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 console.error(error);
                 alert('Erro de conexão com o servidor.');
             }
+            finally {
+                btn.innerText = textoOriginal;
+                btn.disabled = false;
+            }
         });
     }
 
