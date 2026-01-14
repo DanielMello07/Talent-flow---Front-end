@@ -99,7 +99,7 @@ if (loginForm) {
 
                 if (response.ok) {
                     alert('Cadastro realizado com sucesso! Faça login.');
-                    window.location.href = 'login.html';
+                    window.location.href = 'candidato-login.html';
                 } else {
                     // Tentar ler a mensagem de erro do backend (ex: Email já existe)
                     const errorText = await response.text(); 

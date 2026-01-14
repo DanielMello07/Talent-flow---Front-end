@@ -10,6 +10,11 @@
     <link rel="stylesheet" href="css/style.css">
 </head>
     <body class="bg-theme-candidato">
+        <script>
+            if (!localStorage.getItem('token')) {
+                window.location.href = 'candidato-login.html'; // Mude para o nome exato do seu arquivo de login
+            }
+        </script>
 
         <nav class="navbar navbar-expand-lg navbar-dark fixed-top glass-card mx-3 mt-3 rounded-pill" style="border-radius: 50px !important;">
             <div class="container-fluid px-4">
@@ -20,7 +25,8 @@
                 <div class="collapse navbar-collapse" id="candNav">
                     <ul class="navbar-nav ms-auto align-items-center gap-3">
                         <li class="nav-item"><a class="nav-link active" href="#" onclick="showSection('inicio')">Início</a></li>
-                        <li class="nav-item"><a class="nav-link" href="#" onclick="showSection('vagas')">Vagas</a></li>
+                        <li class="nav-item"><a class="nav-link active" href="vagas.html">Vagas</a></li>
+                        <li class="nav-item"><a class="nav-link" href="#" onclick="showSection('vagas')">Candidaturas</a></li>
                         <li class="nav-item"><a class="nav-link" href="#" onclick="showSection('perfil')">Perfil</a></li>
                         <li class="nav-item"><a class="nav-link" href="#" onclick="showSection('curriculo')">Currículo</a></li>
                         <li class="nav-item ms-3">
@@ -66,7 +72,7 @@
             <div id="vagas" class="section-content">
                 <div class="glass-card p-5 fade-in-up">
                     <div class="d-flex justify-content-between align-items-center border-bottom border-light border-opacity-25 pb-3 mb-4">
-                        <h3 class="fw-bold"><i class="bi bi-search me-2"></i>Mural de Vagas</h3>
+                        <h3 class="fw-bold"><i class="bi bi-search me-2"></i>candidaturas</h3>
                         <input type="text" class="form-control form-control-glass w-25" placeholder="Filtrar por área...">
                     </div>
                     <div class="text-center py-5 text-white-50">
@@ -120,7 +126,7 @@
                 // 1. Verificação de Segurança (Guard)
                 if (!token) {
                     alert('Acesso negado. Por favor, faça login.');
-                    window.location.href = 'login.html';
+                    window.location.href = 'candidato-login.html';
                     return;
                 }
 
@@ -128,7 +134,7 @@
                 if (nome) {
                     // Atualiza o "Bem-vindo de volta!" para o nome real
                     const welcomeTitle = document.querySelector('#inicio h2');
-                    if (welcomeTitle) welcomeTitle.innerText = `Bem-vindo de volta, ${nome}!`;
+                    if (welcomeTitle) welcomeTitle.innerText = `Seja bem-vindo, ${nome}!`;
                 }
             });
 
