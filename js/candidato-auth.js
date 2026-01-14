@@ -1,4 +1,4 @@
-// --- LÓGICA DE LOGIN CANDIDATO (CORRIGIDA) ---
+// --- LÓGICA DE LOGIN CANDIDATO (ATUALIZADA COM TOKEN) ---
 const loginForm = document.getElementById('loginForm');
 
 if (loginForm) {
@@ -20,7 +20,7 @@ if (loginForm) {
             const response = await fetch('http://localhost:8080/candidatos/login', {
                 method: 'POST',
                 headers: {
-                    'Content-Type': 'application/json' // Informa ao Spring que é um JSON
+                    'Content-Type': 'application/json' 
                 },
                 body: JSON.stringify({ 
                     email: email, 
@@ -28,29 +28,34 @@ if (loginForm) {
                 })
             });
 
-            // 4. Verifica se a resposta foi bem-sucedida (Status 200)
+            // 4. Verifica se a resposta foi bem-sucedida
             if (response.ok) {
-                // O backend retorna um CandidatoResponseDTO
-                const candidato = await response.json();
+                // O backend retorna um CandidatoLoginResponseDTO (token, nomeCompleto, areaInteresse)
+                const data = await response.json();
                 
-                // Exibe boas-vindas usando o campo nomeCompleto do DTO
-                alert(`Bem-vindo, ${candidato.nomeCompleto}!`);
+                // Exibe boas-vindas
+                alert(`Bem-vindo, ${data.nomeCompleto}!`);
                 
-                // Salva o objeto do usuário no localStorage para persistir a sessão
-                localStorage.setItem('user', JSON.stringify(candidato));
+                // PERSISTÊNCIA DA SESSÃO:
+                // Salvamos o token e os dados básicos separadamente no localStorage
+                localStorage.setItem('token', data.token);
+                localStorage.setItem('nomeUsuario', data.nomeCompleto);
+                localStorage.setItem('areaUsuario', data.areaInteresse);
                 
-                // Redireciona para o dashboard do candidato
+                // Também salvamos o objeto completo para compatibilidade se necessário
+                localStorage.setItem('user', JSON.stringify(data));
+                
+                // Redireciona para o dashboard
                 window.location.href = 'dashboard-candidato.html'; 
             } else {
-                // Caso o status seja 401 ou outro erro
+                // Caso o status seja 401 ou erro de validação
                 const errorMsg = await response.text();
                 alert(errorMsg || 'E-mail ou senha incorretos.');
             }
         } catch (error) {
             console.error('Erro na requisição:', error);
-            alert('Não foi possível conectar ao servidor. Tente novamente mais tarde.');
+            alert('Não foi possível conectar ao servidor. Verifique se o backend está rodando.');
         } finally {
-            // 5. Restaura o botão após o término da operação
             btn.innerText = originalText;
             btn.disabled = false;
         }
