@@ -39,6 +39,7 @@ if (loginForm) {
                 // PERSISTÊNCIA DA SESSÃO:
                 // Salvamos o token e os dados básicos separadamente no localStorage
                 localStorage.setItem('token', data.token);
+                localStorage.setItem('codCandidato', data.codCandidato);
                 localStorage.setItem('nomeUsuario', data.nomeCompleto);
                 localStorage.setItem('areaUsuario', data.areaInteresse);
                 

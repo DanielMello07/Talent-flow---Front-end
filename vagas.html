@@ -4,7 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>TalentFlow - Oportunidades</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
@@ -17,247 +18,238 @@
                 </button>
                 <div class="collapse navbar-collapse" id="candNav">
                     <ul class="navbar-nav ms-auto align-items-center gap-3">
-                        <li class="nav-item"><a class="nav-link active" href="index.html" onclick="showSection('inicio')">Início</a></li>
+                        <li class="nav-item"><a class="nav-link active" href="dashboard-candidato.html">Meu Painel</a></li>
                         <li class="nav-item ms-3">
-                            <a href="index.html" class="btn btn-outline-light rounded-pill px-3 btn-sm hover-scale">Entrar</a>
+                            <button onclick="logout()" class="btn btn-outline-light rounded-pill px-3 btn-sm hover-scale">Sair</button>
                         </li>
                     </ul>
                 </div>
             </div>
         </nav>
+
         <br><br><br><br><br>
         
-        <section class="filtros-area">
-            <input type="text" id="inputBusca" placeholder="Pesquisar cargo..." oninput="listar()">
+        <section class="filtros-area d-flex gap-3 mb-4 flex-wrap">
+            <input type="text" id="inputBusca" class="form-control glass-input w-auto flex-grow-1" placeholder="Pesquisar cargo..." oninput="listar()">
             
-            <select id="selectEmpresa" onchange="listar()">
+            <select id="selectEmpresa" class="form-select glass-input w-auto" onchange="listar()">
                 <option value="">Todas as Empresas</option>
             </select>
-            <script>
-                let vagas=[];
-                let paginaAtual = 0;
-                let itensPorPagina = 12;
 
-                async function getVagas() {
-                    try {
-                    // Backend espera JSON no Body
-                        const response = await fetch('http://localhost:8080/vagas', {
-                            method: 'GET',
-                            headers: {
-                                'Content-Type': 'application/json'
-                            }
-                        });
-
-                        if (response.ok) {
-                            console.log()
-                            vagas = await response.json();
-                            console.log(vagas);
-                            
-                            popularEmpresas();
-
-                            aplicarPaginacao(vagas).forEach(vaga => {
-                                console.log(vaga);
-                            
-                                //// CONTAINER DA VAGA
-                                const vagaDiv = document.createElement('div');
-                                vagaDiv.classList.add('vaga-item','glass-card', 'p-4', 'mb-3');
-                                //// LINK DA VAGA
-                                const vagaLink = document.createElement('a');
-                                vagaLink.href = `index.html`;
-                                vagaLink.classList.add('vaga-link')
-                                vagaLink.appendChild(vagaDiv);
-                                document.getElementById('vagasGrid').appendChild(vagaLink);
-                                //// TÍTULO
-                                const vagaTitulo = document.createElement('h3');
-                                vagaTitulo.textContent = vaga.titulo;                                
-                                vagaTitulo.classList.add('vaga-titulo','fw-bold', 'h4');
-                                vagaDiv.appendChild(vagaTitulo);
-                                //// DESCRIÇÃO
-                                const vagaDescricao = document.createElement('p');
-                                vagaDescricao.textContent = vaga.descricao;
-                                vagaDescricao.classList.add('small', 'text-white-50');
-                                vagaDescricao.classList.add('vaga-descricao');
-                                vagaDiv.appendChild(vagaDescricao);
-                                //// ÁREA
-                                const vagaArea = document.createElement('p');
-                                vagaArea.textContent = vaga.area;
-                                vagaDiv.appendChild(vagaArea);
-                                //// EMPRESA
-                                const vagaEmpresa = document.createElement('p');
-                                vagaEmpresa.textContent = vaga.empresa.nome;
-                                vagaDiv.appendChild(vagaEmpresa);
-
-                                
-
-                            });
-                        } 
-                        else
-                        {
-                            console.log('Erro ao obter as vagas do servidor.');                            
-                        }
-                    } catch (error) {
-                        console.log('Erro ao conectar com o servidor.');
-                        console.error(error);
-                    } 
-                }
-
-
-                function listar() {
-                    // 1. Limpa o grid para a nova filtragem (ou nova página)
-                    const grid = document.getElementById('vagasGrid');
-                    grid.innerHTML = "";
-
-                    // 2. Captura os valores dos inputs
-                    const pesquisa = document.getElementById('inputBusca').value.toLowerCase();
-                    const empresaFiltro = document.getElementById('selectEmpresa').value;
-
-                    // 3. Filtra a partir da variável global 'vagas'
-                    const vagasFiltradas = vagas.filter(vaga => {
-                        const matchesTexto = vaga.titulo.toLowerCase().includes(pesquisa) || 
-                                            vaga.descricao.toLowerCase().includes(pesquisa);
-                        const matchesEmpresa = empresaFiltro === "" || 
-                                            vaga.empresa.nome === empresaFiltro;
-                        return matchesTexto && matchesEmpresa;
-                    });
-
-                    // --- AJUSTE AQUI ---
-                    // 4. Aplica a paginação sobre a lista já filtrada
-                    const vagasParaExibir = aplicarPaginacao(vagasFiltradas);
-
-                    // 5. Faz o loop apenas nas vagas da página atual
-                    vagasParaExibir.forEach(vaga => {
-                        const vagaDiv = document.createElement('div');
-                        vagaDiv.classList.add('vaga-item','glass-card', 'p-4', 'mb-3');
-                        
-                        const vagaLink = document.createElement('a');
-                        vagaLink.href = `index.html`;
-                        vagaLink.classList.add('vaga-link');
-                        
-                        const vagaTitulo = document.createElement('h3');
-                        vagaTitulo.textContent = vaga.titulo;                                
-                        vagaTitulo.classList.add('vaga-titulo','fw-bold', 'h4');
-                        vagaDiv.appendChild(vagaTitulo);
-                        
-                        const vagaDescricao = document.createElement('p');
-                        vagaDescricao.textContent = vaga.descricao;
-                        vagaDescricao.classList.add('small', 'text-white-50', 'vaga-descricao');
-                        vagaDiv.appendChild(vagaDescricao);
-                        
-                        const vagaArea = document.createElement('p');
-                        vagaArea.textContent = vaga.area;
-                        vagaDiv.appendChild(vagaArea);
-                        
-                        const vagaEmpresa = document.createElement('p');
-                        vagaEmpresa.textContent = vaga.empresa.nome;
-                        vagaDiv.appendChild(vagaEmpresa);
-
-                        vagaLink.appendChild(vagaDiv);
-                        grid.appendChild(vagaLink);
-                    });
-
-                }
-
-                function popularEmpresas() {
-                    const selectEmpresa = document.getElementById('selectEmpresa');
-                    const empresasUnicas = [...new Set(vagas.map(vaga => vaga.empresa.nome))];
-
-                    empresasUnicas.forEach(empresaNome => {
-                        const option = document.createElement('option');
-                        option.textContent = empresaNome;
-                        selectEmpresa.appendChild(option);
-                    });
-                }
-
-                function aplicarPaginacao(listaCompleta) {
-                    const totalVagas = listaCompleta.length;
-
-                    // Cálculo de quantos itens estão sendo exibidos (ex: 12/500, 24/500)
-                    // Usamos Math.min para não mostrar um número maior que o total na última página
-                    
-                    const totalPaginas = Math.ceil(totalVagas / itensPorPagina) || 1;
-
-                    if (paginaAtual >= totalPaginas) {
-                        paginaAtual = 0;
-                    }
-                    
-                    const inicio = paginaAtual * itensPorPagina;
-                    const fim = inicio + itensPorPagina;
-                    const exibidosAteAgora = Math.min(fim, totalVagas);
-                    // 1. Atualiza o contador do topo (ex: 12 / 500)
-                    const contadorTopo = document.getElementById('contadorTopo');
-                    if (contadorTopo) {
-                        contadorTopo.textContent = `${exibidosAteAgora} / ${totalVagas} vagas`;
-                    }
-
-                    // 2. Atualiza o indicador do rodapé (ex: Página 1 de 12)
-                    const indicadorPagina = document.getElementById('numPagina');
-                    if (indicadorPagina) {
-                        indicadorPagina.textContent = `${paginaAtual + 1} de ${totalPaginas}`;
-                    }
-
-                    // 3. Controle dos botões
-                    const btnProximo = document.getElementById('btnProximo');
-                    if (btnProximo) {
-                        btnProximo.style.display = fim >= totalVagas ? 'none' : 'inline-block';
-                    }
-
-                    const btnVoltar = document.getElementById('btnVoltar');
-                    if (btnVoltar) {
-                        btnVoltar.style.display = paginaAtual > 0 ? 'inline-block' : 'none';
-                    }
-                    
-                    return listaCompleta.slice(inicio, fim);
-                }
-
-                function proximaPagina() {
-                    paginaAtual++;
-                    listar();
-                }
-
-                function paginaAnterior() {
-                    if (paginaAtual > 0) {
-                        paginaAtual--;
-                        listar();
-                    }
-                }
-
-                window.onload = getVagas();
-                
-            </script>
-
-            <select id="selectPaginacao" onchange="paginaAtual=0; itensPorPagina=(this.value=='all' ? vagas.length : parseInt(this.value)); listar();">
+            <select id="selectPaginacao" class="form-select glass-input w-auto" onchange="paginaAtual=0; itensPorPagina=(this.value=='all' ? vagas.length : parseInt(this.value)); listar();">
                 <option value="4">Exibir 4</option>
                 <option value="12" selected>Exibir 12</option>
                 <option value="24">Exibir 24</option>
                 <option value="all">Ver Todas</option>
             </select>
-            
         </section>
 
-        <div id="ListaVagas" class="p-4"></div>
-        
         <div class="d-flex justify-content-end px-3 mb-2">
             <span id="contadorTopo" class="text-white-50 small fw-bold">0 / 0 vagas</span>
         </div>
 
-        <div id="vagasGrid" class="vagas-grid">
+        <div id="vagasGrid" class="row">
             </div>
+
         <footer class="pagination-footer d-flex justify-content-between align-items-center mt-4 mb-5 px-4">
             <div style="min-width: 150px;">
                 <button id="btnVoltar" class="btn-glass" onclick="paginaAnterior()" style="display: none;">&larr; Anterior</button>
             </div>
-
             <div class="text-white fw-bold">
                 Página <span id="numPagina">1 de 1</span>
             </div>
-
             <div style="min-width: 150px;" class="text-end">
                 <button id="btnProximo" class="btn-glass" onclick="proximaPagina()">Próxima Página &rarr;</button>
             </div>
         </footer>
     </div>
 
-    <script src="js/api.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
+    <div class="modal fade" id="modalVaga" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content glass-card border-light border-opacity-25 text-white shadow-lg">
+                <div class="modal-header border-0 d-flex flex-column align-items-center text-center w-100 position-relative pt-5">
+                    <h3 class="fw-bold mb-0 w-100" id="detalheTitulo" style="letter-spacing: 1px;">Título da Vaga</h3>
+                    <p class="text-info mt-2 h5" id="detalheEmpresa">Nome da Empresa</p>
+                    <button type="button" class="btn-close btn-close-white position-absolute end-0 top-0 m-3" data-bs-dismiss="modal"></button>
+                </div>
+                
+                <div class="modal-body px-5">
+                    <hr class="border-light border-opacity-25 my-4">
+                    <h6 class="fw-bold text-info text-uppercase small" style="letter-spacing: 2px;">Áreas da Vaga:</h6>
+                    <p id="detalheArea" class="mb-4 text-light fs-5">Área</p>
+                    
+                    <hr class="border-light border-opacity-25 my-4">
+                    <h6 class="fw-bold text-info text-uppercase small" style="letter-spacing: 2px;">Descrição:</h6>
+                    <div id="detalheDescricao" class="text-light mb-5" style="white-space: pre-wrap; line-height: 1.8; text-align: justify;">
+                        Descrição...
+                    </div>
+                </div>
+
+                <div class="modal-footer border-0 pb-4 pe-5 d-flex justify-content-end">
+                    <button type="button" id="btnCandidatar" class="btn btn-success btn-lg rounded-pill px-5 fw-bold hover-scale shadow">
+                        Candidatar-se
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        let vagas = [];
+        let paginaAtual = 0;
+        let itensPorPagina = 12;
+        let vagaIdSelecionada = null;
+
+        // 1. Busca as vagas (Geralmente público, não precisa de token aqui)
+        async function getVagas() {
+            try {
+                const response = await fetch('http://localhost:8080/vagas');
+                if (response.ok) {
+                    vagas = await response.json();
+                    popularEmpresas();
+                    listar();
+                } else {
+                    console.error('Erro ao obter as vagas.');
+                }
+            } catch (error) {
+                console.error('Erro de conexão:', error);
+            }
+        }
+
+        // 2. Renderiza os cards
+        function listar() {
+            const grid = document.getElementById('vagasGrid');
+            grid.innerHTML = "";
+            const pesquisa = document.getElementById('inputBusca').value.toLowerCase();
+            const empresaFiltro = document.getElementById('selectEmpresa').value;
+
+            const filtradas = vagas.filter(v => {
+                const matchesTexto = v.titulo.toLowerCase().includes(pesquisa) || 
+                                     v.descricao.toLowerCase().includes(pesquisa);
+                const matchesEmpresa = empresaFiltro === "" || v.empresa.nome === empresaFiltro;
+                return matchesTexto && matchesEmpresa;
+            });
+
+            const paraExibir = aplicarPaginacao(filtradas);
+
+            paraExibir.forEach(vaga => {
+                const col = document.createElement('div');
+                console.log(vaga);
+                col.classList.add('col-md-4', 'mb-4');
+                col.innerHTML = `
+                    <div class="vaga-item glass-card p-4 h-100 d-flex flex-column shadow-sm">
+                        <h4 class="fw-bold mb-2">${vaga.titulo}</h4>
+                        <p class="text-info small mb-2"><i class="bi bi-building me-1"></i>${vaga.empresa.nome}</p>
+                        <p class="text-white-50 small flex-grow-1">
+                            ${vaga.descricao.substring(0, 80)}... 
+                            <span class="text-info fw-bold" style="cursor:pointer" onclick='abrirModal(${JSON.stringify(vaga)})'>Ver mais</span>
+                        </p>
+                        <div class="mt-3">
+                            <span class="badge bg-light text-dark rounded-pill">${vaga.area}</span>
+                        </div>
+                    </div>
+                `;
+                grid.appendChild(col);
+            });
+        }
+
+        function abrirModal(vaga) {
+            vagaIdSelecionada = vaga.codVaga;
+            document.getElementById('detalheTitulo').innerText = vaga.titulo;
+            document.getElementById('detalheEmpresa').innerText = vaga.empresa.nome;
+            document.getElementById('detalheArea').innerText = vaga.area;
+            document.getElementById('detalheDescricao').innerText = vaga.descricao;
+
+            const modal = new bootstrap.Modal(document.getElementById('modalVaga'));
+            modal.show();
+        }
+
+        // 3. Lógica de Candidatura com TOKEN (Ajustado)
+        document.getElementById('btnCandidatar').addEventListener('click', async () => {
+            const token = localStorage.getItem('token');
+            const userStr = localStorage.getItem('user');
+            
+            if(!token || !userStr) {
+                alert("Sessão expirada ou usuário não identificado. Faça login novamente.");
+                window.location.href = 'candidato-login.html';
+                return;
+            }
+
+            const user = JSON.parse(userStr);
+            // O DTO deve bater com CandidatoVagaRequestDTO.java
+            const dto = {
+                codCandidato: user.codCandidato, 
+                codVaga: vagaIdSelecionada
+            };
+            
+            const btn = document.getElementById('btnCandidatar');
+
+            console.log("Enviando DTO:", dto);
+            try {
+                btn.disabled = true;
+                btn.innerText = "Processando...";
+
+                const response = await fetch('http://localhost:8080/candidato-vaga', {
+                    method: 'POST',
+                    headers: { 
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}` // Inclusão do Token
+                    },
+                    body: JSON.stringify(dto)
+                });
+
+                if (response.ok) {
+                    alert("✅ Candidatura enviada com sucesso!");
+                    bootstrap.Modal.getInstance(document.getElementById('modalVaga')).hide();
+                } else {
+                    const erroJson = await response.json().catch(() => ({}));
+                    const mensagem = erroJson.message || "Erro desconhecido no servidor.";
+                    alert("Ops! " + mensagem);
+                }
+            } catch (error) {
+                console.error(error);
+                alert("Erro ao conectar com o servidor.");
+            } finally {
+                btn.disabled = false;
+                btn.innerText = "Candidatar-se";
+            }
+        });
+
+        // Auxiliares
+        function popularEmpresas() {
+            const sel = document.getElementById('selectEmpresa');
+            const nomes = [...new Set(vagas.map(v => v.empresa.nome))];
+            nomes.forEach(n => {
+                const opt = document.createElement('option');
+                opt.value = n; opt.textContent = n;
+                sel.appendChild(opt);
+            });
+        }
+
+        function aplicarPaginacao(lista) {
+            const total = lista.length;
+            const totalPaginas = Math.ceil(total / itensPorPagina) || 1;
+            if (paginaAtual >= totalPaginas) paginaAtual = 0;
+            const inicio = paginaAtual * itensPorPagina;
+            const fim = inicio + itensPorPagina;
+            document.getElementById('contadorTopo').textContent = `${Math.min(fim, total)} / ${total} vagas`;
+            document.getElementById('numPagina').textContent = `${paginaAtual + 1} de ${totalPaginas}`;
+            document.getElementById('btnVoltar').style.display = paginaAtual > 0 ? 'inline-block' : 'none';
+            document.getElementById('btnProximo').style.display = fim >= total ? 'none' : 'inline-block';
+            return lista.slice(inicio, fim);
+        }
+
+        function proximaPagina() { paginaAtual++; listar(); }
+        function paginaAnterior() { if(paginaAtual > 0) { paginaAtual--; listar(); } }
+        
+        function logout() {
+            localStorage.clear();
+            window.location.href = 'index.html';
+        }
+
+        window.onload = getVagas;
+    </script>
 </body>
 </html>
