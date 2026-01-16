@@ -26,14 +26,19 @@ document.addEventListener('DOMContentLoaded', () => {
                         'Content-Type': 'application/json' // Essencial para o @RequestBody do Java
                     },
                     body: JSON.stringify({ 
-                        email: email, 
+                        emailCorporativo: email, 
                         senha: senha 
                     })
                 });
 
                 if (response.ok) {
                     const empresa = await response.json();
+                    
                     localStorage.setItem('empresa', JSON.stringify(empresa));
+                    localStorage.setItem('token', empresa.token);
+                    localStorage.setItem('codEmpresa', empresa.codEmpresa);
+                    localStorage.setItem('user', JSON.stringify(empresa));
+
                     window.location.href = 'dashboard-empresa.html';
                 } else {
                     alert('E-mail ou senha inválidos.');
@@ -90,6 +95,48 @@ document.addEventListener('DOMContentLoaded', () => {
                 btn.innerText = textoOriginal;
                 btn.disabled = false;
             }
+        });
+    }
+
+    // --- LÓGICA DE PUBLICAÇÃO DE VAGA ---
+
+    const publicarVagaForm = document.getElementById('formPublicarVaga');
+
+    if (publicarVagaForm) {
+        publicarVagaForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const vagaDTO = {
+                titulo: document.getElementById('vagaTitulo').value,
+                descricao: document.getElementById('vagaDescricao').value,
+                area: document.getElementById('vagaArea').value,
+                codEmpresa: localStorage.getItem('codEmpresa')
+            };
+            const btn = publicarVagaForm.querySelector('#btnPublicar');
+            const textoOriginal = btn.innerText;
+            btn.innerText = 'Publicando...';
+            btn.disabled = true;
+            try {
+                const response = await fetch(`http://localhost:8080/vagas`, {
+                    method: 'POST',
+                    headers: { 
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${localStorage.getItem('token')}` 
+                    },
+                    body: JSON.stringify(vagaDTO)
+                });
+                if (response.ok) {
+                    alert('Vaga publicada com sucesso!');
+                    window.location.reload();
+                } else {
+                    alert('Erro ao publicar vaga.');
+                }
+            } catch (error) {
+                console.error(error);
+                alert('Erro de conexão.');
+            } finally {
+                btn.innerText = textoOriginal;
+                btn.disabled = false;
+            }   
         });
     }
 });
