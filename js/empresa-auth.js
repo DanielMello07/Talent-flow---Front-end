@@ -252,15 +252,20 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // ----------VAGAS PUBLICADAS ----------
     const listaVagasDiv = document.getElementById('listaVagas');
+    
+    // Variáveis de estado (precisam estar aqui para serem acessadas pelas funções abaixo)
     let vagas = [];
     let paginaAtual = 0;
-    let itensPorPagina = 12;
-    let vagaIdSelecionada = null;
+    let itensPorPagina = 5;
 
     if (listaVagasDiv) {
+        
+        // 1. Função para Buscar Vagas (Inicia tudo)
         async function getVagas() {
             try {
                 const codEmpresa = localStorage.getItem('codEmpresa');
+                if(!codEmpresa) return;
+
                 const response = await fetch(`http://localhost:8080/vagas/empresa/${codEmpresa}`, {
                     method: 'GET',
                     headers: { 
@@ -270,8 +275,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 if (response.ok) {
                     vagas = await response.json();
-                    popularAreas();
-                    listar();
+                    popularAreas(); // Preenche o select de áreas
+                    window.listar(); // Chama a primeira listagem
                 } else {
                     console.error('Erro ao obter as vagas.');
                 }
@@ -280,35 +285,53 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
 
-        async function listar() {
+        // 2. Função de Listagem (Filtra e manda paginar) - AGORA É GLOBAL (window.)
+        window.listar = function() {
             const grid = document.getElementById('listaVagas');
+            if(!grid) return;
             grid.innerHTML = "";
 
-            const pesquisa = document.getElementById('inputBusca').value.toLowerCase();
-            const areaFiltro = document.getElementById('selectArea').value;
+            // Pega valores dos inputs
+            const termo = document.getElementById('inputBusca').value.toLowerCase();
+            const areaSelecionada = document.getElementById('selectArea').value;
 
+            // Filtra a lista completa (vagas)
             const filtradas = vagas.filter(v => {
-                const matchesTexto = v.titulo.toLowerCase().includes(pesquisa) || 
-                                     v.descricao.toLowerCase().includes(pesquisa);
-                const matchesArea = areaFiltro === "" || v.area === areaFiltro;
-                return matchesTexto && matchesArea;
+                const titulo = v.titulo ? v.titulo.toLowerCase() : "";
+                const desc = v.descricao ? v.descricao.toLowerCase() : "";
+                const area = v.area ? v.area : "";
+
+                const matchTexto = titulo.includes(termo) || desc.includes(termo);
+                const matchArea = areaSelecionada === "" || area === areaSelecionada;
+                
+                return matchTexto && matchArea;
             });
 
+            // Aplica paginação nos itens filtrados
             const paraExibir = aplicarPaginacao(filtradas);
+
+            // Renderiza
+            if (paraExibir.length === 0) {
+                grid.innerHTML = '<div class="col-12 text-center text-white-50 mt-5">Nenhuma vaga encontrada.</div>';
+                return;
+            }
 
             paraExibir.forEach(vaga => {
                 const col = document.createElement('div');
-                console.log(vaga);
-                col.classList.add('col-md-12', 'mb-4');
+                col.classList.add('col-md-12', 'mb-4'); // Voltando para col-md-4 para ficar 3 por linha
+
+                // Truque para passar o objeto vaga no onclick sem quebrar as aspas
+                const vagaString = JSON.stringify(vaga).replace(/"/g, '&quot;');
+
                 col.innerHTML = `
-                    <div class="vaga-item glass-card p-4 h-100 d-flex flex-column shadow-sm overflow-hidden hover-lift cursor-pointer" onclick='abrirModal(${JSON.stringify(vaga)})'>
-                        <h4 class="fw-bold mb-2">${vaga.titulo}</h4>
-                        <p class="text-info small mb-2"><i class="bi bi-building me-1"></i>${vaga.empresa.nome}</p>
+                    <div class="vaga-item glass-card p-4 h-100 d-flex flex-column shadow-sm overflow-hidden hover-lift cursor-pointer" onclick="window.abrirModal(${vagaString})">
+                        <h5 class="fw-bold mb-2 text-truncate">${vaga.titulo}</h5>
+                        <p class="text-info small mb-2"><i class="bi bi-building me-1"></i>${vaga.empresa ? vaga.empresa.nome : 'Empresa'}</p>
                         <p class="text-white-50 small flex-grow-1">
-                            ${vaga.descricao.substring(0, 80)}... 
-                            <span class="text-info fw-bold" style="cursor:pointer" onclick='abrirModal(${JSON.stringify(vaga)})'>Ver mais</span>
+                            ${vaga.descricao ? vaga.descricao.substring(0, 60) : ''}... 
+                            <span class="text-info fw-bold">Ver</span>
                         </p>
-                        <div class="mt-3">
+                        <div class="mt-2">
                             <span class="badge bg-light text-dark rounded-pill">${vaga.area}</span>
                         </div>
                     </div>
@@ -317,57 +340,100 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         }
 
-        function abrirModal(vaga) {
-            vagaIdSelecionada = vaga.codVaga;
+        // 3. Lógica de Paginação (Controla números e botões)
+        function aplicarPaginacao(lista) {
+            const total = lista.length;
+            const totalPaginas = Math.ceil(total / itensPorPagina) || 1;
+
+            // Se a busca mudou e estamos numa página que não existe mais, volta pra 0
+            if (paginaAtual >= totalPaginas) paginaAtual = 0;
+
+            const inicio = paginaAtual * itensPorPagina;
+            const fim = inicio + itensPorPagina;
+
+            // Atualiza Textos
+            const contador = document.getElementById('contadorTopo');
+            const numPag = document.getElementById('numPagina');
+            
+            if(contador) contador.textContent = `${Math.min(fim, total)}/${total}`;
+            if(numPag) numPag.textContent = `${paginaAtual + 1}/${totalPaginas}`;
+
+            // --- CORREÇÃO DOS BOTÕES (Display Flex vs None) ---
+            const btnVoltar = document.getElementById('btnVoltar');
+            const btnProximo = document.getElementById('btnProximo');
+            btnVoltar.disabled = (paginaAtual === 0);
+            btnProximo.disabled = (paginaAtual === totalPaginas - 1);
+
+            if (btnVoltar) {
+                // Esconde se for a página 0 (primeira)
+                btnVoltar.style.display = (paginaAtual > 0) ? 'flex' : 'none';
+            }
+
+            if (btnProximo) {
+                // Esconde se já mostrou todos os itens
+                btnProximo.style.display = (fim < total) ? 'flex' : 'none';
+            }
+
+            return lista.slice(inicio, fim);
+        }
+
+        // 4. Funções de Controle (Globais)
+        window.proximaPagina = function() {
+            paginaAtual++;
+            window.listar();
+        }
+
+        window.paginaAnterior = function() {
+            if (paginaAtual > 0) {
+                paginaAtual--;
+                window.listar();
+            }
+        }
+
+        // Função chamada pelo Select de Paginação
+        window.mudarQtdPorPagina = function(valor) {
+            paginaAtual = 0; // Reseta sempre que mudar a quantidade
+            if (valor === 'all') {
+                itensPorPagina = vagas.length > 0 ? vagas.length : 1000;
+            } else {
+                itensPorPagina = parseInt(valor);
+            }
+            window.listar();
+        }
+
+        // 5. Modal e Áreas
+        window.abrirModal = function(vaga) {
+            // Garante que o modal HTML existe antes de tentar preencher
+            const modalEl = document.getElementById('modalVaga');
+            if(!modalEl) {
+                console.error("Modal HTML não encontrado!"); 
+                return;
+            }
+
             document.getElementById('detalheTitulo').innerText = vaga.titulo;
-            document.getElementById('detalheEmpresa').innerText = vaga.empresa.nome;
+            document.getElementById('detalheEmpresa').innerText = vaga.empresa ? vaga.empresa.nome : '';
             document.getElementById('detalheArea').innerText = vaga.area;
             document.getElementById('detalheDescricao').innerText = vaga.descricao;
 
-            const modal = new bootstrap.Modal(document.getElementById('modalVaga'));
+            const modal = new bootstrap.Modal(modalEl);
             modal.show();
         }
 
         function popularAreas() {
             const sel = document.getElementById('selectArea');
-            const areas = [...new Set(vagas.map(v => v.area))];
+            if(!sel) return;
+            sel.innerHTML = '<option value="">Todas</option>';
+            
+            const areas = [...new Set(vagas.map(v => v.area).filter(a => a))];
             areas.forEach(a => {
                 const opt = document.createElement('option');
-                opt.value = a; opt.textContent = a;
+                opt.value = a;
+                opt.textContent = a;
                 sel.appendChild(opt);
             });
         }
 
-         function aplicarPaginacao(lista) {
-            const total = lista.length;
-            const totalPaginas = Math.ceil(total / itensPorPagina) || 1;
-            if (paginaAtual >= totalPaginas) paginaAtual = 0;
-            const inicio = paginaAtual * itensPorPagina;
-            const fim = inicio + itensPorPagina;
-            document.getElementById('contadorTopo').textContent = `${Math.min(fim, total)} / ${total} vagas`;
-            document.getElementById('numPagina').textContent = `${paginaAtual + 1} de ${totalPaginas}`;
-            document.getElementById('btnVoltar').style.display = paginaAtual > 0 ? 'inline-block' : 'none';
-            document.getElementById('btnProximo').style.display = fim >= total ? 'none' : 'inline-block';
-            return lista.slice(inicio, fim);
-        }
-
-        function proximaPagina() { paginaAtual++; listar(); }
-        function paginaAnterior() { if(paginaAtual > 0) { paginaAtual--; listar(); } }
-
-        window.onload = getVagas;
-
+        // Inicia a busca
+        getVagas();
     }
-    /*
-
-       
-        
-        
-        function logout() {
-            localStorage.clear();
-            window.location.href = 'index.html';
-        }
-
-        
-
-    */
 });

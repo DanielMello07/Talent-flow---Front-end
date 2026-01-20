@@ -94,31 +94,53 @@
                 <div class="glass-card p-5 fade-in-up mx-auto auth-card-lg">
                     <h3 class="fw-bold mb-4 text-center">Vagas publicadas</h3>
                     
-                    <section class="filtros-area d-flex gap-3 mb-4 flex-wrap align-items-center">
-                        <input type="text" id="inputBusca" class="form-control glass-input w-auto flex-grow-1" placeholder="Pesquisar vaga..." oninput="listar()">
-                        
+                    <section class="filtros-area d-flex gap-3 mb-2 flex-wrap align-items-center">
+                                    <div class="input-group">
+                                        <span class="input-group-text bg-transparent border-end-0 border-light border-opacity-25 text-white-50">
+                                            <i class="bi bi-search"></i>
+                                        </span>
+                                        <input type="text" id="inputBusca" class="form-control glass-input border-start-0 ps-2" placeholder="Pesquisar vaga..." oninput="window.listar()">
+                                    </div>                   
                         <select id="selectArea" class="form-select glass-input w-auto" onchange="listar()">
-                            <option value="">Todas as Áreas</option>
                         </select>
-
-                        
 
                         <select id="selectPaginacao" class="form-select glass-input w-auto" onchange="paginaAtual=0; itensPorPagina=(this.value=='all' ? vagas.length : parseInt(this.value)); listar();">
-                            <option value="4">Exibir 4</option>
-                            <option value="12" selected>Exibir 12</option>
-                            <option value="24">Exibir 24</option>
-                            <option value="all">Ver Todas</option>
+                            <option value="4">4/pág</option>
+                            <option value="12" selected>12/pág</option>
+                            <option value="24">24/pág</option>
+                            <option value="all">Tudo</option>
                         </select>
+                        <select name="selectAtiva" id="selectAtiva" class="form-select glass-input w-auto" onchange="listar()">
+                            <option value="true">Ativas</option>
+                            <option value="">Todas</option>
+                            <option value="false">Encerradas</option>
+                        </select>
+                        <select name="selectOrdem" id="selectOrdem" class="form-select glass-input w-auto ms-auto" onchange="listar()">
+                            <option value="nome">Nome</option>
+                            <option value="publicacao">Publicação</option>
+                            <option value="candidaturas">Candidaturas</option>
+                        </select>
+                       <a href="" class="text-decoration-none text-reset">
+                            <i class="bi bi-arrow-down-up" ></i>
+                       </a>
                     </section>
 
-                    <span id="contadorTopo" class="text-white-50 small ms-auto d-inline-block mb-3"></span>
+                    <div class="text-end mb-3">
+                        <span id="contadorTopo" class="text-white-50 small"></span>
+                    </div>
 
                     <div id="listaVagas" class="row"></div>
 
-                    <div class="d-flex justify-content-center align-items-center gap-3 mt-4">
-                        <button id="btnVoltar" class="btn btn-outline-light btn-sm rounded-pill px-3" onclick="paginaAnterior()">Anxdvxvdxvdxvxdvdxvterior</button>
-                        <span id="numPagina" class="text-white"></span>
-                        <button id="btnProximo" class="btn btn-outline-light btn-sm rounded-pill px-3" onclick="proximaPagina()">Próximo</button>
+                    <div class="d-flex justify-content-center align-items-center gap-2 mt-4">
+                        <button id="btnVoltar" class="btn btn-danger btn-sm rounded-circle d-flex" onclick="paginaAnterior()" style="width: 35px; height: 35px; display: flex; align-items: center; justify-content: center;">
+                            <i class="bi bi-arrow-left-short fs-4"></i>
+                        </button>
+                        
+                        <span id="numPagina" class="text-white small fw-bold">1/1</span>
+                        
+                        <button id="btnProximo" class="btn btn-danger btn-sm rounded-circle d-flex " onclick="proximaPagina()" style="width: 35px; height: 35px; display: flex; align-items: center; justify-content: center;">
+                            <i class="bi bi-arrow-right-short fs-4"></i>
+                        </button>
                     </div>
                 </div>
             </div>
@@ -130,6 +152,44 @@
                 </div>
             </div>
 
+        </div>
+
+        <div class="modal fade" id="modalVaga" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered modal-lg">
+                <div class="modal-content border-light border-opacity-25 text-white shadow-lg" 
+                    style="background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px); border: 1px solid rgba(255, 255, 255, 0.1);">
+                    
+                    <div class="modal-header border-0 d-flex flex-column align-items-center text-center w-100 position-relative pt-5">
+                        <h3 class="fw-bold mb-0 w-100" id="detalheTitulo" style="letter-spacing: 1px;">Título da Vaga</h3>
+                        <p class="text-info mt-2 h5" id="detalheEmpresa">Nome da Empresa</p>
+                        <button type="button" class="btn-close btn-close-white position-absolute end-0 top-0 m-4" data-bs-dismiss="modal"></button>
+                    </div>
+                    
+                    <div class="modal-body px-5">
+                        <hr class="border-light border-opacity-25 my-4">
+                        
+                        <h6 class="fw-bold text-info text-uppercase small" style="letter-spacing: 2px;">Área da Vaga:</h6>
+                        <p id="detalheArea" class="mb-4 text-light fs-5">Área</p>
+                        
+                        <hr class="border-light border-opacity-25 my-4">
+                        
+                        <h6 class="fw-bold text-info text-uppercase small" style="letter-spacing: 2px;">Descrição:</h6>
+                        <div id="detalheDescricao" class="text-light mb-4" style="white-space: pre-wrap; line-height: 1.8; text-align: justify; font-weight: 300;">
+                            Descrição...
+                        </div>
+                    </div>
+
+                    <div class="modal-footer border-0 pb-5 d-flex justify-content-center gap-3">
+                        <button type="button" class="btn btn-danger btn-lg rounded-pill px-4 fw-bold shadow" onclick="window.encerrarVaga()">
+                            <i class="bi bi-x-circle me-2"></i>Encerrar Vaga
+                        </button>
+
+                        <button type="button" class="btn btn-light btn-lg rounded-pill px-5 fw-bold text-dark shadow" onclick="window.editarVaga()">
+                            <i class="bi bi-pencil-square me-2"></i>Editar
+                        </button>
+                    </div>
+                </div>
+            </div>
         </div>
 
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
