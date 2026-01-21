@@ -254,9 +254,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const listaVagasDiv = document.getElementById('listaVagas');
     
     // Variáveis de estado (precisam estar aqui para serem acessadas pelas funções abaixo)
-    let vagas = [];
-    let paginaAtual = 0;
-    let itensPorPagina = 5;
+    window.vagas = [];
+    window.paginaAtual = 0;
+    window.itensPorPagina = 5;
 
     if (listaVagasDiv) {
         
@@ -436,4 +436,21 @@ document.addEventListener('DOMContentLoaded', () => {
         // Inicia a busca
         getVagas();
     }
+    // --- LÓGICA DE LOGOUT ---
+    const sairBtn = document.getElementById('sair');
+    if (sairBtn) {
+        sairBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            logout();
+        });
+    }
+
+    function logout() {
+        localStorage.removeItem('empresa');
+        localStorage.removeItem('token');
+        localStorage.removeItem('codEmpresa');
+        localStorage.removeItem('user');
+        window.location.href = 'index.html';
+    }
+
 });
