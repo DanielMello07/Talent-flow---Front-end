@@ -257,6 +257,8 @@ document.addEventListener('DOMContentLoaded', () => {
     window.vagas = [];
     window.paginaAtual = 0;
     window.itensPorPagina = 5;
+    window.candidaturasVaga = {};
+    window.ordemCrescente = true;
 
     if (listaVagasDiv) {
         
@@ -276,7 +278,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (response.ok) {
                     vagas = await response.json();
                     popularAreas(); // Preenche o select de áreas
-                    window.listar(); // Chama a primeira listagem
+                    contarCandidaturas(); // Chama a primeira listagem
                 } else {
                     console.error('Erro ao obter as vagas.');
                 }
@@ -291,55 +293,154 @@ document.addEventListener('DOMContentLoaded', () => {
             if(!grid) return;
             grid.innerHTML = "";
 
-            // Pega valores dos inputs
+            // 1. Pega valores de TODOS os inputs de filtro
             const termo = document.getElementById('inputBusca').value.toLowerCase();
             const areaSelecionada = document.getElementById('selectArea').value;
+            const statusSelecionado = document.getElementById('selectAtiva').value; // Novo filtro
+            const ordemSelecionada = document.getElementById('selectOrdem').value;
 
-            // Filtra a lista completa (vagas)
+            // 2. Filtra a lista completa SEM sobrescrever a original (vagas)
             const filtradas = vagas.filter(v => {
                 const titulo = v.titulo ? v.titulo.toLowerCase() : "";
                 const desc = v.descricao ? v.descricao.toLowerCase() : "";
                 const area = v.area ? v.area : "";
-
+                const statusSelecionado = document.getElementById('selectAtiva').value;
+                
+                
+                // Lógica do match de texto e área
                 const matchTexto = titulo.includes(termo) || desc.includes(termo);
                 const matchArea = areaSelecionada === "" || area === areaSelecionada;
-                
-                return matchTexto && matchArea;
+
+                // NOVA Lógica do match de Status (Ativa/Encerrada)
+                let matchStatus = true;
+                if (statusSelecionado === 'true') {
+                    matchStatus = v.ativa === true;
+                } else if (statusSelecionado === 'false') {
+                    matchStatus = v.ativa === false;
+                }
+
+                return matchTexto && matchArea && matchStatus;
             });
 
-            // Aplica paginação nos itens filtrados
+            // --- ORDENAÇÃO CORRIGIDA COM INVERSÃO ---
+            if (ordemSelecionada === 'nome') {
+                filtradas.sort((a, b) => {
+                    const titleA = (a.titulo || "").toLowerCase();
+                    const titleB = (b.titulo || "").toLowerCase();
+                    
+                    // Se ordemCrescente for true: A -> Z. Se false: Z -> A
+                    return window.ordemCrescente 
+                        ? titleA.localeCompare(titleB) 
+                        : titleB.localeCompare(titleA);
+                });
+            } 
+            else if (ordemSelecionada === 'candidaturas') {
+                filtradas.sort((a, b) => {
+                    const qtdeA = window.candidaturasVaga[a.codVaga] || 0;
+                    const qtdeB = window.candidaturasVaga[b.codVaga] || 0;
+                    
+                    // Se ordemCrescente for true: Mais candidatos primeiro (B - A)
+                    // Se ordemCrescente for false: Menos candidatos primeiro (A - B)
+                    return window.ordemCrescente 
+                        ? qtdeB - qtdeA 
+                        : qtdeA - qtdeB;
+                });
+            }
+
+            // 3. Aplica paginação nos itens filtrados
             const paraExibir = aplicarPaginacao(filtradas);
 
-            // Renderiza
+            // ... restante do código de renderização (o seu paraExibir.forEach...)
             if (paraExibir.length === 0) {
                 grid.innerHTML = '<div class="col-12 text-center text-white-50 mt-5">Nenhuma vaga encontrada.</div>';
                 return;
             }
 
             paraExibir.forEach(vaga => {
-                const col = document.createElement('div');
-                col.classList.add('col-md-12', 'mb-4'); // Voltando para col-md-4 para ficar 3 por linha
+                // ... seu código de criar as colunas e o card ...
+                // DICA: Você pode mudar a cor do badge se a vaga estiver encerrada
+                
 
-                // Truque para passar o objeto vaga no onclick sem quebrar as aspas
+                const badgeClass = vaga.ativa ? 'bg-light text-dark' : 'bg-danger text-white';
+                const statusTexto = vaga.ativa ? vaga.area : 'ENCERRADA';
+
+                const col = document.createElement('div');
+                col.classList.add('col-md-12', 'mb-4');
                 const vagaString = JSON.stringify(vaga).replace(/"/g, '&quot;');
 
                 col.innerHTML = `
-                    <div class="vaga-item glass-card p-4 h-100 d-flex flex-column shadow-sm overflow-hidden hover-lift cursor-pointer" onclick="window.abrirModal(${vagaString})">
-                        <h5 class="fw-bold mb-2 text-truncate">${vaga.titulo}</h5>
+                    <div class="vaga-item glass-card p-4 h-100 d-flex fade-in-up flex-column shadow-sm overflow-hidden hover-lift cursor-pointer ${vaga.ativa ? '' : 'opacity-75'}" onclick="window.abrirModal(${vagaString})">
+                        <h5 class="fw-bold mb-2 text-truncate">${vaga.titulo} ${vaga.ativa ? '' : '<span class="badge bg-secondary">Encerrada</span>'}</h5>
                         <p class="text-info small mb-2"><i class="bi bi-building me-1"></i>${vaga.empresa ? vaga.empresa.nome : 'Empresa'}</p>
                         <p class="text-white-50 small flex-grow-1">
-                            ${vaga.descricao ? vaga.descricao.substring(0, 60) : ''}... 
-                            <span class="text-info fw-bold">Ver</span>
+                            ${vaga.descricao ? vaga.descricao.substring(0, 60) : '...<br/><span class="text-info fw-bold">Ver</span>'} 
+                            
                         </p>
                         <div class="mt-2">
-                            <span class="badge bg-light text-dark rounded-pill">${vaga.area}</span>
+                            <span class="badge ${badgeClass} rounded-pill area-tag-clicavel" onclick="filtroAreaTag(event, '${vaga.area}')">${statusTexto}</span>
                         </div>
                     </div>
                 `;
                 grid.appendChild(col);
             });
-        }
+        };
 
+        window.inverterOrdem = function(event) {
+            if (event) event.preventDefault();
+            window.ordemCrescente = !window.ordemCrescente;
+
+            // Opcional: Rotacionar o ícone visualmente para dar feedback ao usuário
+            const icone = document.querySelector('.bi-arrow-down-up');
+    
+            if (icone) {
+                // 1. Forçamos o ícone a aceitar transformações
+                icone.style.display = 'inline-block'; 
+                
+                // 2. Se for falso, escala -1 (vira de ponta cabeça)
+                // Se for verdadeiro, escala 1 (volta ao normal)
+                icone.style.transform = window.ordemCrescente ? 'scaleY(1)' : 'scaleY(-1)';
+                
+                // 3. Suaviza o movimento
+                icone.style.transition = 'transform 0.001s ease-in-out';
+            }
+
+            window.listar();
+        };
+
+        async function contarCandidaturas() {
+            console.log("Iniciando contagem de candidaturas...");
+
+            const promises = vagas.map(async (vaga) => {
+                try {
+                    const response = await fetch(`http://localhost:8080/candidato-vaga/candidaturas/${vaga.codVaga}`, {
+                        method: 'GET',
+                        headers: { 
+                            'Authorization': `Bearer ${localStorage.getItem('token')}` 
+                        }
+                    });
+
+                    if (response.ok) {
+                        const total = await response.json();
+                        
+                        // Guarda no dicionário: Chave = ID da Vaga, Valor = Quantidade
+                        window.candidaturasVaga[vaga.codVaga] = parseInt(total);
+                        
+                        console.log(`Vaga ${vaga.codVaga}: ${total} candidaturas carregadas.`);
+                    }
+                } catch (error) {
+                    console.error(`Erro ao contar candidatos da vaga ${vaga.codVaga}:`, error);
+                    window.candidaturasVaga[vaga.codVaga] = 0;
+                }
+            });
+
+            // Espera todas as promessas do map terminarem
+            await Promise.all(promises);
+
+            console.log("Dicionário completo carregado:", window.candidaturasVaga);
+            
+            // Agora que o dicionário está cheio, lista e ordena
+            window.listar(); 
+        }
         // 3. Lógica de Paginação (Controla números e botões)
         function aplicarPaginacao(lista) {
             const total = lista.length;
@@ -409,6 +510,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 console.error("Modal HTML não encontrado!"); 
                 return;
             }
+            window.vagaSelecionada = vaga.codVaga;
 
             document.getElementById('detalheTitulo').innerText = vaga.titulo;
             document.getElementById('detalheEmpresa').innerText = vaga.empresa ? vaga.empresa.nome : '';
@@ -436,6 +538,8 @@ document.addEventListener('DOMContentLoaded', () => {
         // Inicia a busca
         getVagas();
     }
+
+    
     // --- LÓGICA DE LOGOUT ---
     const sairBtn = document.getElementById('sair');
     if (sairBtn) {
@@ -444,6 +548,7 @@ document.addEventListener('DOMContentLoaded', () => {
             logout();
         });
     }
+    
 
     function logout() {
         localStorage.removeItem('empresa');
@@ -453,4 +558,33 @@ document.addEventListener('DOMContentLoaded', () => {
         window.location.href = 'index.html';
     }
 
+    window.filtroAreaTag = function(event, areaNome) {
+        // IMPEDE que o clique "suba" para a div pai (evita abrir o modal)
+        if (event) event.stopPropagation();
+
+        const select = document.getElementById('selectArea');
+        if (select) {
+            select.value = areaNome;
+            window.paginaAtual = 0; // Reseta a página ao filtrar
+            window.listar(); // Atualiza a lista
+        }
+    };
+
+    window.encerrarVaga = async function(codVaga) {
+        try {
+            const response = await fetch(`http://localhost:8080/vagas/encerrar/${codVaga}/empresa/${localStorage.getItem('codEmpresa')}`, {
+                method: 'PUT',
+                headers: {
+                    'Authorization': `Bearer ${localStorage.getItem('token')}`
+                }
+            });
+            if (response.ok) {
+                window.listar(); // Atualiza a lista após encerrar
+            } else {
+                console.error("Erro ao encerrar vaga");
+            }
+        } catch (error) {
+            console.error("Erro ao encerrar vaga:", error);
+        }
+    };
 });

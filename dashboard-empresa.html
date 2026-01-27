@@ -91,7 +91,7 @@
             </div>
 
             <div id="vagas" class="section-content">
-                <div class="glass-card p-5 fade-in-up mx-auto auth-card-lg">
+                <div class="section-card p-5 fade-in-up mx-auto auth-card-lg">
                     <h3 class="fw-bold mb-4 text-center">Vagas publicadas</h3>
                     
                     <section class="filtros-area d-flex gap-3 mb-2 flex-wrap align-items-center">
@@ -110,19 +110,18 @@
                             <option value="24">24/pág</option>
                             <option value="all">Tudo</option>
                         </select>
-                        <select name="selectAtiva" id="selectAtiva" class="form-select glass-input w-auto" onchange="listar()">
+                        <select name="selectAtiva" id="selectAtiva" class="form-select glass-input w-auto" onchange="window.listar()">
                             <option value="true">Ativas</option>
                             <option value="">Todas</option>
                             <option value="false">Encerradas</option>
                         </select>
-                        <select name="selectOrdem" id="selectOrdem" class="form-select glass-input w-auto ms-auto" onchange="listar()">
+                        <select name="selectOrdem" id="selectOrdem" class="form-select glass-input w-auto ms-auto" onchange="window.listar()">
                             <option value="nome">Nome</option>
-                            <option value="publicacao">Publicação</option>
                             <option value="candidaturas">Candidaturas</option>
                         </select>
-                       <a href="" class="text-decoration-none text-reset">
-                            <i class="bi bi-arrow-down-up" ></i>
-                       </a>
+                       <a href="#" class="text-decoration-none text-reset" onclick="window.inverterOrdem(event)">
+                            <i class="bi bi-arrow-down-up"></i>
+                        </a>
                     </section>
 
                     <div class="text-end mb-3">

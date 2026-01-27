@@ -206,7 +206,6 @@ body {
 }
 .section-content.active {
     display: block;
-    animation: fadeInUp 0.5s ease-out;
 }
 
 /* Estilos para os Cards de Vagas - Adicionar ao style.css */
@@ -317,26 +316,32 @@ body {
     align-items: center;
 }
 
-.loader {
-    display: inline-flex; /* Use inline-flex para não quebrar a linha do card */
-    gap: 5px;
-    align-items: center;
-    justify-content: center;
+.section-card {
+    background: var(--glass-bg);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid var(--glass-border);
+    border-radius: 16px;
+    box-shadow: 0 8px 32px 0 rgba(62, 63, 75, 0.37);
+    
+    /* Garante que o cursor continue sendo a seta padrão */
+    cursor: default;
+    
+    /* Impede qualquer transição visual indesejada */
+    transition: none;
 }
 
-.loader span {
-    width: 10px;
-    height: 10px;
-    display: inline-block; /* Garante que o círculo seja desenhado */
-    border-radius: 50%;
-    background: #dc3545; /* Mudei para vermelho para combinar com o tema Business da imagem */
-    animation: ellipsis 1.4s infinite ease-in-out both;
+.form-select{
+    cursor: pointer;
 }
 
-.loader span:nth-child(1) { animation-delay: -0.32s; }
-.loader span:nth-child(2) { animation-delay: -0.16s; }
+.area-tag-clicavel {
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: inline-block; /* Garante que o hover respeite o tamanho do texto */
+}
 
-@keyframes ellipsis {
-    0%, 80%, 100% { opacity: 0; }
-    40% { opacity: 1; }
+.area-tag-clicavel:hover {
+    filter: brightness(1.2); /* Dá um leve brilho ao passar o mouse */
+    transform: scale(1.05);  /* Um leve aumento para feedback visual */
 }
