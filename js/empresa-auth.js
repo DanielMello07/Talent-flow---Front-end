@@ -357,32 +357,42 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             paraExibir.forEach(vaga => {
-                // ... seu código de criar as colunas e o card ...
-                // DICA: Você pode mudar a cor do badge se a vaga estiver encerrada
-                
-
-                const badgeClass = vaga.ativa ? 'bg-light text-dark' : 'bg-danger text-white';
-                const statusTexto = vaga.ativa ? vaga.area : 'ENCERRADA';
-
                 const col = document.createElement('div');
                 col.classList.add('col-md-12', 'mb-4');
                 const vagaString = JSON.stringify(vaga).replace(/"/g, '&quot;');
+                
+                // Verifica se a descrição é longa (ex: > 100 caracteres)
+                const descricaoOriginal = vaga.descricao || "";
+                const ehLonga = descricaoOriginal.length > 100;
 
                 col.innerHTML = `
-                    <div class="vaga-item glass-card p-4 h-100 d-flex fade-in-up flex-column shadow-sm overflow-hidden hover-lift cursor-pointer ${vaga.ativa ? '' : 'opacity-75'}" onclick="window.abrirModal(${vagaString})">
-                        <h5 class="fw-bold mb-2 text-truncate">${vaga.titulo} ${vaga.ativa ? '' : '<span class="badge bg-secondary">Encerrada</span>'}</h5>
+                    <div class="vaga-item glass-card p-4 d-flex flex-column shadow-sm hover-lift cursor-pointer ${vaga.ativa ? '' : 'opacity-75'}" 
+                        onclick="window.abrirModal(${vagaString})">
+                        <h5 class="vaga-titulo fw-bold mb-2">
+                            ${vaga.titulo} ${vaga.ativa ? '' : '<span class="badge bg-secondary">Encerrada</span>'}
+                        </h5>
                         <p class="text-info small mb-2"><i class="bi bi-building me-1"></i>${vaga.empresa ? vaga.empresa.nome : 'Empresa'}</p>
-                        <p class="text-white-50 small flex-grow-1">
-                            ${vaga.descricao ? vaga.descricao.substring(0, 60) : '...<br/><span class="text-info fw-bold">Ver</span>'} 
-                            
-                        </p>
-                        <div class="mt-2">
-                            <span class="badge ${badgeClass} rounded-pill area-tag-clicavel" onclick="filtroAreaTag(event, '${vaga.area}')">${statusTexto}</span>
+                        
+                        <div class="descricao-wrapper">
+                            <p class="vaga-descricao text-white-50 small mb-1">${descricaoOriginal}</p>
+                            ${ehLonga ? `<span class="btn-ver-mais" onclick="window.toggleCard(event, this)">Ver Mais</span>` : ''}
+                        </div>
+
+                        <div class="mt-auto pt-3">
+                            <span class="badge bg-light text-dark rounded-pill area-tag-clicavel" onclick="filtroAreaTag(event, '${vaga.area}')">${vaga.area}</span>
                         </div>
                     </div>
                 `;
                 grid.appendChild(col);
             });
+
+            // Função para expandir o card localmente
+            window.toggleCard = function(event, botao) {
+                event.stopPropagation(); // Impede de abrir o modal ao clicar em "Ver Mais"
+                const card = botao.closest('.vaga-item');
+                card.classList.toggle('expandido');
+                botao.innerText = card.classList.contains('expandido') ? 'Ver Menos' : 'Ver Mais';
+            };
         };
 
         window.inverterOrdem = function(event) {
@@ -502,24 +512,84 @@ document.addEventListener('DOMContentLoaded', () => {
             window.listar();
         }
 
+       
         // 5. Modal e Áreas
         window.abrirModal = function(vaga) {
-            // Garante que o modal HTML existe antes de tentar preencher
             const modalEl = document.getElementById('modalVaga');
-            if(!modalEl) {
-                console.error("Modal HTML não encontrado!"); 
-                return;
-            }
-            window.vagaSelecionada = vaga.codVaga;
+            if(!modalEl) return;
 
-            document.getElementById('detalheTitulo').innerText = vaga.titulo;
-            document.getElementById('detalheEmpresa').innerText = vaga.empresa ? vaga.empresa.nome : '';
-            document.getElementById('detalheArea').innerText = vaga.area;
-            document.getElementById('detalheDescricao').innerText = vaga.descricao;
+            window.vagaSelecionadaObj = vaga; // Guardamos o objeto completo
+
+            // Preenche o modal em modo de exibição
+            document.getElementById('detalheTitulo').innerHTML = `<span>${vaga.titulo}</span>`;
+            document.getElementById('detalheArea').innerHTML = `<span>${vaga.area}</span>`;
+            document.getElementById('detalheDescricao').innerHTML = `<span>${vaga.descricao}</span>`;
+
+            // Atualiza os botões do rodapé do modal (Certifique-se que o HTML do modal tem um footer com ID 'modalFooter')
+            const footer = modalEl.querySelector('.modal-footer');
+            if (footer) {
+                footer.innerHTML = `
+                    <button class="btn btn-danger" onclick="window.encerrarVaga()"><i class="bi bi-x-circle me-1"></i>Encerrar Vaga</button>
+                    <button class="btn btn-light" onclick="window.habilitarEdicao()"><i class="bi bi-pencil-square me-1"></i>Editar</button>
+                `;
+            }
 
             const modal = new bootstrap.Modal(modalEl);
             modal.show();
-        }
+        };
+
+        window.habilitarEdicao = function() {
+            const v = window.vagaSelecionadaObj;
+
+            // Transforma textos em inputs/textarea
+            document.getElementById('detalheTitulo').innerHTML = `<input type="text" id="editTitulo" class="form-control form-control-glass" value="${v.titulo}">`;
+            document.getElementById('detalheArea').innerHTML = `<input type="text" id="editArea" class="form-control form-control-glass" value="${v.area}">`;
+            document.getElementById('detalheDescricao').innerHTML = `<textarea id="editDescricao" class="form-control form-control-glass" rows="5">${v.descricao}</textarea>`;
+
+            // Troca botões para Salvar/Cancelar
+            const footer = document.querySelector('#modalVaga .modal-footer');
+            footer.innerHTML = `
+                <button class="btn btn-outline-light" onclick="window.abrirModal(window.vagaSelecionadaObj)">Cancelar</button>
+                <button class="btn btn-success" onclick="window.salvarEdicao()">Salvar Alterações</button>
+            `;
+        };
+
+        window.salvarEdicao = async function() {
+            const vagaAtualizada = {
+                titulo: document.getElementById('editTitulo').value,
+                area: document.getElementById('editArea').value,
+                descricao: document.getElementById('editDescricao').value,
+                codEmpresa: localStorage.getItem('codEmpresa')
+            };
+
+            try {
+                const response = await fetch(`http://localhost:8080/vagas/${window.vagaSelecionadaObj.codVaga}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${localStorage.getItem('token')}`
+                    },
+                    body: JSON.stringify(vagaAtualizada)
+                });
+
+                if (response.ok) {
+                    // Atualiza a vaga na lista local (window.vagas) para não precisar de novo GET
+                    const index = window.vagas.findIndex(v => v.codVaga === window.vagaSelecionadaObj.codVaga);
+                    if (index !== -1) window.vagas[index] = { ...window.vagas[index], ...vagaAtualizada };
+
+                    alert("Vaga atualizada com sucesso!");
+                    
+                    // Fecha o modal e atualiza o front
+                    const modalInstance = bootstrap.Modal.getInstance(document.getElementById('modalVaga'));
+                    modalInstance.hide();
+                    window.listar(); 
+                } else {
+                    alert("Erro ao salvar as alterações.");
+                }
+            } catch (error) {
+                console.error("Erro:", error);
+            }
+        };
 
         function popularAreas() {
             const sel = document.getElementById('selectArea');
@@ -569,22 +639,45 @@ document.addEventListener('DOMContentLoaded', () => {
             window.listar(); // Atualiza a lista
         }
     };
+    window.encerrarVaga = async function() {
+        // É prudente confirmar antes de uma ação destrutiva
+        if (!confirm("Deseja realmente encerrar esta vaga?")) return;
 
-    window.encerrarVaga = async function(codVaga) {
         try {
-            const response = await fetch(`http://localhost:8080/vagas/encerrar/${codVaga}/empresa/${localStorage.getItem('codEmpresa')}`, {
+            const response = await fetch(`http://localhost:8080/vagas/encerrar/${window.vagaSelecionada}/empresa/${localStorage.getItem('codEmpresa')}`, {
                 method: 'PUT',
                 headers: {
                     'Authorization': `Bearer ${localStorage.getItem('token')}`
                 }
             });
+
             if (response.ok) {
-                window.listar(); // Atualiza a lista após encerrar
+                const index = window.vagas.findIndex(v => v.codVaga === window.vagaSelecionada);
+            
+                if (index !== -1) {
+                    window.vagas[index].ativa = false; // Muda para encerrada na memória
+                }
+
+                window.listar();
+
+                // 2. Atualiza a lista visualmente
+                if (typeof window.listar === 'function') {
+                    window.listar(); 
+                }
+
+                // 3. Opcional: Fechar o modal do Bootstrap automaticamente
+                const modalEl = document.getElementById('modalVaga');
+                if (modalEl) {
+                    const modal = bootstrap.Modal.getInstance(modalEl);
+                    if (modal) modal.hide();
+                }
+                alert("Vaga encerrada com sucesso!");            
             } else {
-                console.error("Erro ao encerrar vaga");
+                alert("Erro ao encerrar a vaga no servidor.");
             }
         } catch (error) {
-            console.error("Erro ao encerrar vaga:", error);
+            console.error("Erro na requisição:", error);
+            alert("Erro de conexão ao tentar encerrar a vaga.");
         }
     };
 });

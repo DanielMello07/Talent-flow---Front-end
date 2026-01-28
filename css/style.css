@@ -345,3 +345,57 @@ body {
     filter: brightness(1.2); /* Dá um leve brilho ao passar o mouse */
     transform: scale(1.05);  /* Um leve aumento para feedback visual */
 }
+
+/* CORREÇÃO PARA O MODAL (Imagem 2) */
+.modal-body {
+    word-break: break-all; /* Força a quebra de sequências infinitas de caracteres */
+    overflow-wrap: break-word;
+}
+
+/* CORREÇÃO PARA O CARD (Imagem 1) */
+/* --- CORREÇÃO DE EXPANSÃO --- */
+
+.vaga-item {
+    width: 100%;
+    border: 1px solid var(--glass-border);
+    padding: 15px;
+    border-radius: 15px;
+    /* Mudamos de height fixo para min-height */
+    min-height: 250px; 
+    height: auto !important; 
+    transition: all 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+/* Estado Expandido */
+.vaga-item.expandido {
+    height: auto !important;
+}
+
+/* Descrição normal (limitada) */
+.vaga-descricao {
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    word-break: break-word; /* Resolve o erro da imagem 2 */
+}
+
+/* Descrição quando o card está expandido */
+.vaga-item.expandido .vaga-descricao {
+    display: block !important; /* Remove o modo flex-box que limita linhas */
+    -webkit-line-clamp: unset !important; /* Remove o limite de 3 linhas */
+    max-height: none !important;
+}
+
+.btn-ver-mais {
+    color: #0dcaf0;
+    cursor: pointer;
+    text-decoration: underline;
+    font-size: 0.85rem;
+    margin-top: 5px;
+    display: inline-block;
+}
