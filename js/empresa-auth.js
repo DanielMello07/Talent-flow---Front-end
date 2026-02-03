@@ -545,14 +545,16 @@ document.addEventListener('DOMContentLoaded', () => {
             document.getElementById('detalheTitulo').innerHTML = `<input type="text" id="editTitulo" class="form-control form-control-glass" value="${v.titulo}">`;
             document.getElementById('detalheArea').innerHTML = `<input type="text" id="editArea" class="form-control form-control-glass" value="${v.area}">`;
             document.getElementById('detalheDescricao').innerHTML = `<textarea id="editDescricao" class="form-control form-control-glass" rows="5">${v.descricao}</textarea>`;
-
+            
             // Troca botões para Salvar/Cancelar
             const footer = document.querySelector('#modalVaga .modal-footer');
             footer.innerHTML = `
                 <button class="btn btn-outline-light" onclick="window.abrirModal(window.vagaSelecionadaObj)">Cancelar</button>
-                <button class="btn btn-success" onclick="window.salvarEdicao()">Salvar Alterações</button>
+                <button class="btn btn-success" onclick="window.salvarEdicao()" id="btnSalvar">Salvar Alterações</button>
             `;
         };
+
+        
 
         window.salvarEdicao = async function() {
             const vagaAtualizada = {
@@ -562,8 +564,15 @@ document.addEventListener('DOMContentLoaded', () => {
                 codEmpresa: localStorage.getItem('codEmpresa')
             };
 
+            const btn = document.getElementById('btnSalvar');
+            
             try {
+                btn.disabled = true;
+                btn.innerText = 'Salvando...';
                 const response = await fetch(`http://localhost:8080/vagas/${window.vagaSelecionadaObj.codVaga}`, {
+                    
+                    
+
                     method: 'PUT',
                     headers: {
                         'Content-Type': 'application/json',
