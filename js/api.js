@@ -1,4 +1,4 @@
-const API_BASE_URL = "http://localhost:8080";
+const API_BASE_URL = "https:/talentflow-gfq3.onrender.com/";
 
 const TalentAPI = {
     async fetchVagas() {
@@ -11,5 +11,5 @@ const TalentAPI = {
             return [];
         }
     }
-    // Outros métodos como loginCandidato() etc virão aqui
+    / Outros métodos como loginCandidato() etc virão aqui
 };

@@ -1,13 +1,13 @@
 document.addEventListener('DOMContentLoaded', () => {
     
-    // --- LÓGICA DE LOGIN EMPRESA ---
+    / --- LÓGICA DE LOGIN EMPRESA ---
     const loginEmpresaForm = document.getElementById('loginEmpresaForm');
 
     if (loginEmpresaForm) {
         loginEmpresaForm.addEventListener('submit', async (e) => {
             e.preventDefault(); 
             
-            // Pega inputs (usando IDs que adicionamos no HTML)
+            / Pega inputs (usando IDs que adicionamos no HTML)
             const email = document.getElementById('loginEmail').value; 
             const senha = document.getElementById('loginSenha').value;
 
@@ -17,13 +17,13 @@ document.addEventListener('DOMContentLoaded', () => {
             btn.disabled = true;
 
             try {
-                // 1. Mudamos a URL para ser limpa
-                // 2. Adicionamos Headers informando que estamos enviando JSON
-                // 3. Enviamos os dados no 'body' como string JSON
-                const response = await fetch('http://localhost:8080/empresas/login', {
+                / 1. Mudamos a URL para ser limpa
+                / 2. Adicionamos Headers informando que estamos enviando JSON
+                / 3. Enviamos os dados no 'body' como string JSON
+                const response = await fetch('https:/talentflow-gfq3.onrender.com/empresas/login', {
                     method: 'POST',
                     headers: {
-                        'Content-Type': 'application/json' // Essencial para o @RequestBody do Java
+                        'Content-Type': 'application/json' / Essencial para o @RequestBody do Java
                     },
                     body: JSON.stringify({ 
                         emailCorporativo: email, 
@@ -54,7 +54,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // --- LÓGICA DE CADASTRO EMPRESA ---
+    / --- LÓGICA DE CADASTRO EMPRESA ---
     const cadastroEmpresaForm = document.getElementById('cadastroEmpresaForm');
     
     if (cadastroEmpresaForm) {
@@ -76,7 +76,7 @@ document.addEventListener('DOMContentLoaded', () => {
             btn.disabled = true;
 
             try {
-                const response = await fetch('http://localhost:8080/empresas', {
+                const response = await fetch('https:/talentflow-gfq3.onrender.com/empresas', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(empresaDTO)
@@ -98,7 +98,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // --- LÓGICA DE PUBLICAÇÃO DE VAGA ---
+    / --- LÓGICA DE PUBLICAÇÃO DE VAGA ---
 
     const publicarVagaForm = document.getElementById('formPublicarVaga');
 
@@ -116,7 +116,7 @@ document.addEventListener('DOMContentLoaded', () => {
             btn.innerText = 'Publicando...';
             btn.disabled = true;
             try {
-                const response = await fetch(`http://localhost:8080/vagas`, {
+                const response = await fetch(`https:/talentflow-gfq3.onrender.com/vagas`, {
                     method: 'POST',
                     headers: { 
                         'Content-Type': 'application/json',
@@ -144,7 +144,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (vagasAtivas) {
         const vagasAtivasElement = document.getElementById('vagasAtivas');
         async function carregarQtdeVagas() {
-           // Dentro da sua função carregarQtdeVagas():
+           / Dentro da sua função carregarQtdeVagas():
             const codEmpresa = localStorage.getItem('codEmpresa');
             vagasAtivasElement.innerHTML = `
                 <span class="loader-inline">
@@ -176,12 +176,12 @@ document.addEventListener('DOMContentLoaded', () => {
             </span>
             `;
             try {
-                const response = await fetch(`http://localhost:8080/empresas/contagem/vagas/${codEmpresa}`, {
-                    method: 'GET', // Mudamos para GET
+                const response = await fetch(`https:/talentflow-gfq3.onrender.com/empresas/contagem/vagas/${codEmpresa}`, {
+                    method: 'GET', / Mudamos para GET
                     headers: { 
                         'Authorization': `Bearer ${localStorage.getItem('token')}` 
                     }
-                    // NÃO precisa de 'Content-Type' nem de 'body'!
+                    / NÃO precisa de 'Content-Type' nem de 'body'!
                 });
 
                 if (response.ok) {
@@ -231,7 +231,7 @@ document.addEventListener('DOMContentLoaded', () => {
             </span>
             `;
             try {
-                const response = await fetch(`http://localhost:8080/empresas/contagem/candidaturas/${codEmpresa}`, {
+                const response = await fetch(`https:/talentflow-gfq3.onrender.com/empresas/contagem/candidaturas/${codEmpresa}`, {
                     method: 'GET',
                     headers: { 
                         'Authorization': `Bearer ${localStorage.getItem('token')}` 
@@ -250,10 +250,10 @@ document.addEventListener('DOMContentLoaded', () => {
         carregarQtdeCandidatos();
     }
 
-    // ----------VAGAS PUBLICADAS ----------
+    / ----------VAGAS PUBLICADAS ----------
     const listaVagasDiv = document.getElementById('listaVagas');
     
-    // Variáveis de estado (precisam estar aqui para serem acessadas pelas funções abaixo)
+    / Variáveis de estado (precisam estar aqui para serem acessadas pelas funções abaixo)
     window.vagas = [];
     window.paginaAtual = 0;
     window.itensPorPagina = 5;
@@ -262,13 +262,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (listaVagasDiv) {
         
-        // 1. Função para Buscar Vagas (Inicia tudo)
+        / 1. Função para Buscar Vagas (Inicia tudo)
         async function getVagas() {
             try {
                 const codEmpresa = localStorage.getItem('codEmpresa');
                 if(!codEmpresa) return;
 
-                const response = await fetch(`http://localhost:8080/vagas/empresa/${codEmpresa}`, {
+                const response = await fetch(`https:/talentflow-gfq3.onrender.com/vagas/empresa/${codEmpresa}`, {
                     method: 'GET',
                     headers: { 
                         'Authorization': `Bearer ${localStorage.getItem('token')}` 
@@ -277,8 +277,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 if (response.ok) {
                     vagas = await response.json();
-                    popularAreas(); // Preenche o select de áreas
-                    contarCandidaturas(); // Chama a primeira listagem
+                    popularAreas(); / Preenche o select de áreas
+                    contarCandidaturas(); / Chama a primeira listagem
                 } else {
                     console.error('Erro ao obter as vagas.');
                 }
@@ -287,19 +287,19 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
 
-        // 2. Função de Listagem (Filtra e manda paginar) - AGORA É GLOBAL (window.)
+        / 2. Função de Listagem (Filtra e manda paginar) - AGORA É GLOBAL (window.)
         window.listar = function() {
             const grid = document.getElementById('listaVagas');
             if(!grid) return;
             grid.innerHTML = "";
 
-            // 1. Pega valores de TODOS os inputs de filtro
+            / 1. Pega valores de TODOS os inputs de filtro
             const termo = document.getElementById('inputBusca').value.toLowerCase();
             const areaSelecionada = document.getElementById('selectArea').value;
-            const statusSelecionado = document.getElementById('selectAtiva').value; // Novo filtro
+            const statusSelecionado = document.getElementById('selectAtiva').value; / Novo filtro
             const ordemSelecionada = document.getElementById('selectOrdem').value;
 
-            // 2. Filtra a lista completa SEM sobrescrever a original (vagas)
+            / 2. Filtra a lista completa SEM sobrescrever a original (vagas)
             const filtradas = vagas.filter(v => {
                 const titulo = v.titulo ? v.titulo.toLowerCase() : "";
                 const desc = v.descricao ? v.descricao.toLowerCase() : "";
@@ -307,11 +307,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 const statusSelecionado = document.getElementById('selectAtiva').value;
                 
                 
-                // Lógica do match de texto e área
+                / Lógica do match de texto e área
                 const matchTexto = titulo.includes(termo) || desc.includes(termo);
                 const matchArea = areaSelecionada === "" || area === areaSelecionada;
 
-                // NOVA Lógica do match de Status (Ativa/Encerrada)
+                / NOVA Lógica do match de Status (Ativa/Encerrada)
                 let matchStatus = true;
                 if (statusSelecionado === 'true') {
                     matchStatus = v.ativa === true;
@@ -322,13 +322,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 return matchTexto && matchArea && matchStatus;
             });
 
-            // --- ORDENAÇÃO CORRIGIDA COM INVERSÃO ---
+            / --- ORDENAÇÃO CORRIGIDA COM INVERSÃO ---
             if (ordemSelecionada === 'nome') {
                 filtradas.sort((a, b) => {
                     const titleA = (a.titulo || "").toLowerCase();
                     const titleB = (b.titulo || "").toLowerCase();
                     
-                    // Se ordemCrescente for true: A -> Z. Se false: Z -> A
+                    / Se ordemCrescente for true: A -> Z. Se false: Z -> A
                     return window.ordemCrescente 
                         ? titleA.localeCompare(titleB) 
                         : titleB.localeCompare(titleA);
@@ -339,18 +339,18 @@ document.addEventListener('DOMContentLoaded', () => {
                     const qtdeA = window.candidaturasVaga[a.codVaga] || 0;
                     const qtdeB = window.candidaturasVaga[b.codVaga] || 0;
                     
-                    // Se ordemCrescente for true: Mais candidatos primeiro (B - A)
-                    // Se ordemCrescente for false: Menos candidatos primeiro (A - B)
+                    / Se ordemCrescente for true: Mais candidatos primeiro (B - A)
+                    / Se ordemCrescente for false: Menos candidatos primeiro (A - B)
                     return window.ordemCrescente 
                         ? qtdeB - qtdeA 
                         : qtdeA - qtdeB;
                 });
             }
 
-            // 3. Aplica paginação nos itens filtrados
+            / 3. Aplica paginação nos itens filtrados
             const paraExibir = aplicarPaginacao(filtradas);
 
-            // ... restante do código de renderização (o seu paraExibir.forEach...)
+            / ... restante do código de renderização (o seu paraExibir.forEach...)
             if (paraExibir.length === 0) {
                 grid.innerHTML = '<div class="col-12 text-center text-white-50 mt-5">Nenhuma vaga encontrada.</div>';
                 return;
@@ -361,7 +361,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 col.classList.add('col-md-12', 'mb-4');
                 const vagaString = JSON.stringify(vaga).replace(/"/g, '&quot;');
                 
-                // Verifica se a descrição é longa (ex: > 100 caracteres)
+                / Verifica se a descrição é longa (ex: > 100 caracteres)
                 const descricaoOriginal = vaga.descricao || "";
                 const ehLonga = descricaoOriginal.length > 100;
 
@@ -386,9 +386,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 grid.appendChild(col);
             });
 
-            // Função para expandir o card localmente
+            / Função para expandir o card localmente
             window.toggleCard = function(event, botao) {
-                event.stopPropagation(); // Impede de abrir o modal ao clicar em "Ver Mais"
+                event.stopPropagation(); / Impede de abrir o modal ao clicar em "Ver Mais"
                 const card = botao.closest('.vaga-item');
                 card.classList.toggle('expandido');
                 botao.innerText = card.classList.contains('expandido') ? 'Ver Menos' : 'Ver Mais';
@@ -399,18 +399,18 @@ document.addEventListener('DOMContentLoaded', () => {
             if (event) event.preventDefault();
             window.ordemCrescente = !window.ordemCrescente;
 
-            // Opcional: Rotacionar o ícone visualmente para dar feedback ao usuário
+            / Opcional: Rotacionar o ícone visualmente para dar feedback ao usuário
             const icone = document.querySelector('.bi-arrow-down-up');
     
             if (icone) {
-                // 1. Forçamos o ícone a aceitar transformações
+                / 1. Forçamos o ícone a aceitar transformações
                 icone.style.display = 'inline-block'; 
                 
-                // 2. Se for falso, escala -1 (vira de ponta cabeça)
-                // Se for verdadeiro, escala 1 (volta ao normal)
+                / 2. Se for falso, escala -1 (vira de ponta cabeça)
+                / Se for verdadeiro, escala 1 (volta ao normal)
                 icone.style.transform = window.ordemCrescente ? 'scaleY(1)' : 'scaleY(-1)';
                 
-                // 3. Suaviza o movimento
+                / 3. Suaviza o movimento
                 icone.style.transition = 'transform 0.001s ease-in-out';
             }
 
@@ -422,7 +422,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             const promises = vagas.map(async (vaga) => {
                 try {
-                    const response = await fetch(`http://localhost:8080/candidato-vaga/candidaturas/${vaga.codVaga}`, {
+                    const response = await fetch(`https:/talentflow-gfq3.onrender.com/candidato-vaga/candidaturas/${vaga.codVaga}`, {
                         method: 'GET',
                         headers: { 
                             'Authorization': `Bearer ${localStorage.getItem('token')}` 
@@ -432,7 +432,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     if (response.ok) {
                         const total = await response.json();
                         
-                        // Guarda no dicionário: Chave = ID da Vaga, Valor = Quantidade
+                        / Guarda no dicionário: Chave = ID da Vaga, Valor = Quantidade
                         window.candidaturasVaga[vaga.codVaga] = parseInt(total);
                         
                         console.log(`Vaga ${vaga.codVaga}: ${total} candidaturas carregadas.`);
@@ -443,52 +443,52 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             });
 
-            // Espera todas as promessas do map terminarem
+            / Espera todas as promessas do map terminarem
             await Promise.all(promises);
 
             console.log("Dicionário completo carregado:", window.candidaturasVaga);
             
-            // Agora que o dicionário está cheio, lista e ordena
+            / Agora que o dicionário está cheio, lista e ordena
             window.listar(); 
         }
-        // 3. Lógica de Paginação (Controla números e botões)
+        / 3. Lógica de Paginação (Controla números e botões)
         function aplicarPaginacao(lista) {
             const total = lista.length;
             const totalPaginas = Math.ceil(total / itensPorPagina) || 1;
 
-            // Se a busca mudou e estamos numa página que não existe mais, volta pra 0
+            / Se a busca mudou e estamos numa página que não existe mais, volta pra 0
             if (paginaAtual >= totalPaginas) paginaAtual = 0;
 
             const inicio = paginaAtual * itensPorPagina;
             const fim = inicio + itensPorPagina;
 
-            // Atualiza Textos
+            / Atualiza Textos
             const contador = document.getElementById('contadorTopo');
             const numPag = document.getElementById('numPagina');
             
             if(contador) contador.textContent = `${Math.min(fim, total)}/${total}`;
             if(numPag) numPag.textContent = `${paginaAtual + 1}/${totalPaginas}`;
 
-            // --- CORREÇÃO DOS BOTÕES (Display Flex vs None) ---
+            / --- CORREÇÃO DOS BOTÕES (Display Flex vs None) ---
             const btnVoltar = document.getElementById('btnVoltar');
             const btnProximo = document.getElementById('btnProximo');
             btnVoltar.disabled = (paginaAtual === 0);
             btnProximo.disabled = (paginaAtual === totalPaginas - 1);
 
             if (btnVoltar) {
-                // Esconde se for a página 0 (primeira)
+                / Esconde se for a página 0 (primeira)
                 btnVoltar.style.display = (paginaAtual > 0) ? 'flex' : 'none';
             }
 
             if (btnProximo) {
-                // Esconde se já mostrou todos os itens
+                / Esconde se já mostrou todos os itens
                 btnProximo.style.display = (fim < total) ? 'flex' : 'none';
             }
 
             return lista.slice(inicio, fim);
         }
 
-        // 4. Funções de Controle (Globais)
+        / 4. Funções de Controle (Globais)
         window.proximaPagina = function() {
             paginaAtual++;
             window.listar();
@@ -501,9 +501,9 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
 
-        // Função chamada pelo Select de Paginação
+        / Função chamada pelo Select de Paginação
         window.mudarQtdPorPagina = function(valor) {
-            paginaAtual = 0; // Reseta sempre que mudar a quantidade
+            paginaAtual = 0; / Reseta sempre que mudar a quantidade
             if (valor === 'all') {
                 itensPorPagina = vagas.length > 0 ? vagas.length : 1000;
             } else {
@@ -513,19 +513,19 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
        
-        // 5. Modal e Áreas
+        / 5. Modal e Áreas
         window.abrirModal = function(vaga) {
             const modalEl = document.getElementById('modalVaga');
             if(!modalEl) return;
 
-            window.vagaSelecionadaObj = vaga; // Guardamos o objeto completo
+            window.vagaSelecionadaObj = vaga; / Guardamos o objeto completo
 
-            // Preenche o modal em modo de exibição
+            / Preenche o modal em modo de exibição
             document.getElementById('detalheTitulo').innerHTML = `<span>${vaga.titulo}</span>`;
             document.getElementById('detalheArea').innerHTML = `<span>${vaga.area}</span>`;
             document.getElementById('detalheDescricao').innerHTML = `<span>${vaga.descricao}</span>`;
 
-            // Atualiza os botões do rodapé do modal (Certifique-se que o HTML do modal tem um footer com ID 'modalFooter')
+            / Atualiza os botões do rodapé do modal (Certifique-se que o HTML do modal tem um footer com ID 'modalFooter')
             const footer = modalEl.querySelector('.modal-footer');
             if (footer) {
                 footer.innerHTML = `
@@ -541,12 +541,12 @@ document.addEventListener('DOMContentLoaded', () => {
         window.habilitarEdicao = function() {
             const v = window.vagaSelecionadaObj;
 
-            // Transforma textos em inputs/textarea
+            / Transforma textos em inputs/textarea
             document.getElementById('detalheTitulo').innerHTML = `<input type="text" id="editTitulo" class="form-control form-control-glass" value="${v.titulo}">`;
             document.getElementById('detalheArea').innerHTML = `<input type="text" id="editArea" class="form-control form-control-glass" value="${v.area}">`;
             document.getElementById('detalheDescricao').innerHTML = `<textarea id="editDescricao" class="form-control form-control-glass" rows="5">${v.descricao}</textarea>`;
             
-            // Troca botões para Salvar/Cancelar
+            / Troca botões para Salvar/Cancelar
             const footer = document.querySelector('#modalVaga .modal-footer');
             footer.innerHTML = `
                 <button class="btn btn-outline-light" onclick="window.abrirModal(window.vagaSelecionadaObj)">Cancelar</button>
@@ -569,7 +569,7 @@ document.addEventListener('DOMContentLoaded', () => {
             try {
                 btn.disabled = true;
                 btn.innerText = 'Salvando...';
-                const response = await fetch(`http://localhost:8080/vagas/${window.vagaSelecionadaObj.codVaga}`, {
+                const response = await fetch(`https:/talentflow-gfq3.onrender.com/vagas/${window.vagaSelecionadaObj.codVaga}`, {
                     
                     
 
@@ -582,13 +582,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 });
 
                 if (response.ok) {
-                    // Atualiza a vaga na lista local (window.vagas) para não precisar de novo GET
+                    / Atualiza a vaga na lista local (window.vagas) para não precisar de novo GET
                     const index = window.vagas.findIndex(v => v.codVaga === window.vagaSelecionadaObj.codVaga);
                     if (index !== -1) window.vagas[index] = { ...window.vagas[index], ...vagaAtualizada };
 
                     alert("Vaga atualizada com sucesso!");
                     
-                    // Fecha o modal e atualiza o front
+                    / Fecha o modal e atualiza o front
                     const modalInstance = bootstrap.Modal.getInstance(document.getElementById('modalVaga'));
                     modalInstance.hide();
                     window.listar(); 
@@ -614,12 +614,12 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         }
 
-        // Inicia a busca
+        / Inicia a busca
         getVagas();
     }
 
     
-    // --- LÓGICA DE LOGOUT ---
+    / --- LÓGICA DE LOGOUT ---
     const sairBtn = document.getElementById('sair');
     if (sairBtn) {
         sairBtn.addEventListener('click', (e) => {
@@ -638,22 +638,22 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     window.filtroAreaTag = function(event, areaNome) {
-        // IMPEDE que o clique "suba" para a div pai (evita abrir o modal)
+        / IMPEDE que o clique "suba" para a div pai (evita abrir o modal)
         if (event) event.stopPropagation();
 
         const select = document.getElementById('selectArea');
         if (select) {
             select.value = areaNome;
-            window.paginaAtual = 0; // Reseta a página ao filtrar
-            window.listar(); // Atualiza a lista
+            window.paginaAtual = 0; / Reseta a página ao filtrar
+            window.listar(); / Atualiza a lista
         }
     };
     window.encerrarVaga = async function() {
-        // É prudente confirmar antes de uma ação destrutiva
+        / É prudente confirmar antes de uma ação destrutiva
         if (!confirm("Deseja realmente encerrar esta vaga?")) return;
 
         try {
-            const response = await fetch(`http://localhost:8080/vagas/encerrar/${window.vagaSelecionada}/empresa/${localStorage.getItem('codEmpresa')}`, {
+            const response = await fetch(`https:/talentflow-gfq3.onrender.com/vagas/encerrar/${window.vagaSelecionada}/empresa/${localStorage.getItem('codEmpresa')}`, {
                 method: 'PUT',
                 headers: {
                     'Authorization': `Bearer ${localStorage.getItem('token')}`
@@ -664,17 +664,17 @@ document.addEventListener('DOMContentLoaded', () => {
                 const index = window.vagas.findIndex(v => v.codVaga === window.vagaSelecionada);
             
                 if (index !== -1) {
-                    window.vagas[index].ativa = false; // Muda para encerrada na memória
+                    window.vagas[index].ativa = false; / Muda para encerrada na memória
                 }
 
                 window.listar();
 
-                // 2. Atualiza a lista visualmente
+                / 2. Atualiza a lista visualmente
                 if (typeof window.listar === 'function') {
                     window.listar(); 
                 }
 
-                // 3. Opcional: Fechar o modal do Bootstrap automaticamente
+                / 3. Opcional: Fechar o modal do Bootstrap automaticamente
                 const modalEl = document.getElementById('modalVaga');
                 if (modalEl) {
                     const modal = bootstrap.Modal.getInstance(modalEl);

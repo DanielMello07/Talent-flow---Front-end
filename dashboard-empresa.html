@@ -4,9 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Painel Empresa - TalentFlow</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+    <link href="https:/cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https:/fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https:/cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
     <link rel="stylesheet" href="css/style.css">
 </head>
     <body class="bg-theme-empresa">
@@ -191,17 +191,17 @@
             </div>
         </div>
 
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+        <script src="https:/cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
         <script>
             function showSection(sectionId) {
                 document.querySelectorAll('.section-content').forEach(el => el.classList.remove('active'));
                 document.querySelectorAll('.nav-link').forEach(el => el.classList.remove('active'));
                 document.getElementById(sectionId).classList.add('active');
-                // 'event.target' é o elemento clicado (o link nav-link)
+                / 'event.target' é o elemento clicado (o link nav-link)
                 if (event.target) {
                     event.target.classList.add('active');
                 } else {
-                    // Caso seja chamado por JS, ativamos o link correspondente
+                    / Caso seja chamado por JS, ativamos o link correspondente
                     document.querySelector(`.nav-link[onclick*='${sectionId}']`).classList.add('active');
                 }
             }
@@ -210,17 +210,17 @@
                 document.addEventListener('DOMContentLoaded', () => {
                     const token = localStorage.getItem('token');
 
-                    // 1. Verificação de Segurança (Guard)
+                    / 1. Verificação de Segurança (Guard)
                     if (!token) {
                         window.location.href = 'empresa-login.html';
                         return;
                     }
                 });
 
-                // 3. Lógica de Logout
+                / 3. Lógica de Logout
                 function fazerLogout() {
-                    // Opcional: Chamar o back-end para deletar o token no banco
-                    localStorage.clear(); // Limpa token, nome, etc.
+                    / Opcional: Chamar o back-end para deletar o token no banco
+                    localStorage.clear(); / Limpa token, nome, etc.
                     window.location.href = 'index.html';
                 }
             </script>
