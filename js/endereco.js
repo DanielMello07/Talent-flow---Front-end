@@ -1,7 +1,7 @@
-/ URL base do Back-end Spring Boot
-const API_BASE_URL = 'https:/talentflow-gfq3.onrender.com/enderecos/';
+// URL base do Back-end Spring Boot
+const API_BASE_URL = 'https://talentflow-gfq3.onrender.com/enderecos/';
 
-/ Função principal disparada pelo onblur no campo CEP
+// Função principal disparada pelo onblur no campo CEP
 async function buscarEndereco() {
     const cepInput = document.getElementById('cep');
     const cep = cepInput.value.replace(/\D/g, '');
@@ -31,7 +31,7 @@ async function buscarEndereco() {
             return;
         }
 
-        / Mapeamento e Autocomplete:
+        // Mapeamento e Autocomplete:
         document.getElementById('rua').value = data.logradouro || '';
         document.getElementById('bairro').value = data.bairro || '';
         document.getElementById('cidade').value = data.localidade || '';
@@ -45,7 +45,7 @@ async function buscarEndereco() {
     }
 }
 
-/ Função auxiliar para resetar os campos
+// Função auxiliar para resetar os campos
 function limparCamposEndereco() {
     document.getElementById('rua').value = '';
     document.getElementById('bairro').value = '';

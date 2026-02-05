@@ -4,15 +4,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Área do Candidato - TalentFlow</title>
-    <link href="https:/cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https:/fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https:/cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
     <link rel="stylesheet" href="css/style.css">
 </head>
     <body class="bg-theme-candidato">
         <script>
             if (!localStorage.getItem('token')) {
-                window.location.href = 'candidato-login.html'; / Mude para o nome exato do seu arquivo de login
+                window.location.href = 'candidato-login.html'; // Mude para o nome exato do seu arquivo de login
             }
         </script>
 
@@ -105,18 +105,18 @@
 
         
 
-        <script src="https:/cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
         <script>
-            / Script simples para alternar abas sem recarregar
+            // Script simples para alternar abas sem recarregar
             function showSection(sectionId) {
-                / Remove active de todos
+                // Remove active de todos
                 document.querySelectorAll('.section-content').forEach(el => el.classList.remove('active'));
                 document.querySelectorAll('.nav-link').forEach(el => el.classList.remove('active'));
                 
-                / Ativa o selecionado
+                // Ativa o selecionado
                 document.getElementById(sectionId).classList.add('active');
                 
-                / Marca o link como ativo (lógica simplificada)
+                // Marca o link como ativo (lógica simplificada)
                 event.target.classList.add('active');
             }
         </script>
@@ -125,25 +125,25 @@
                 const token = localStorage.getItem('token');
                 const nome = localStorage.getItem('nomeUsuario');
 
-                / 1. Verificação de Segurança (Guard)
+                // 1. Verificação de Segurança (Guard)
                 if (!token) {
                     alert('Acesso negado. Por favor, faça login.');
                     window.location.href = 'candidato-login.html';
                     return;
                 }
 
-                / 2. Personalização da Interface
+                // 2. Personalização da Interface
                 if (nome) {
-                    / Atualiza o "Bem-vindo de volta!" para o nome real
+                    // Atualiza o "Bem-vindo de volta!" para o nome real
                     const welcomeTitle = document.querySelector('#inicio h2');
                     if (welcomeTitle) welcomeTitle.innerText = `Seja bem-vindo, ${nome}!`;
                 }
             });
 
-            / 3. Lógica de Logout
+            // 3. Lógica de Logout
             function fazerLogout() {
-                / Opcional: Chamar o back-end para deletar o token no banco
-                localStorage.clear(); / Limpa token, nome, etc.
+                // Opcional: Chamar o back-end para deletar o token no banco
+                localStorage.clear(); // Limpa token, nome, etc.
                 window.location.href = 'index.html';
             }
         </script>
