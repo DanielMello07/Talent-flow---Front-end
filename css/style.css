@@ -399,3 +399,24 @@ body {
     margin-top: 5px;
     display: inline-block;
 }
+
+.cards-informacoes {
+    width: 100%; 
+    overflow-wrap: break-word;
+    word-break: break-word;
+}
+
+.glass-card {
+  border: 1px solid rgba(255, 255, 255, 0.2); /* Borda fina e clara */
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.05); /* Fundo sutil */
+  backdrop-filter: blur(10px); /* O efeito de vidro */
+  padding: 20px;
+}
+
+.card-titulo {
+  padding: 0 10px; /* Isso cria o espaço vazio nas laterais do texto */
+  font-weight: bold;
+  color: #fff;
+  margin-left: 10px; /* Posiciona o título mais à esquerda ou direita */
+}

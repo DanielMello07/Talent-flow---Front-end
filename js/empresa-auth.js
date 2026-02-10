@@ -690,3 +690,10 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 });
+
+try{
+
+}catch(error){
+    console.error("Erro geral no script:", error);
+    alert("Ocorreu um erro inesperado. Por favor, tente novamente mais tarde.");
+}

@@ -147,7 +147,26 @@
             <div id="infos" class="section-content">
                 <div class="glass-card p-5 fade-in-up">
                     <h3 class="fw-bold mb-3">Dados da Empresa</h3>
-                    <p class="text-white-50">Visualize e edite os dados cadastrais da organização.</p>
+                    <div class="container">
+                        <div class="row g-3"> 
+                            <div class="col glass-card d-flex flex-column justify-content-evenly " style="min-height: 200px; margin-right: 5px;">
+                                <p class="m-0"><strong>Nome: </strong> <span id="infoNome">Carregando...</span></p>
+                                <p class="m-0"><strong>Email: </strong> <span id="infoEmail">Carregando...</span></p>
+                                <p class="m-0"><strong>CNPJ: </strong> <span id="infoCNPJ">Carregando...</span></p>
+                            </div>
+
+                            <div class="col glass-card d-flex flex-column justify-content-evenly" style="min-height: 200px; margin-left: 5px;">
+                                <p class="m-0"><strong>Telefone: </strong> <span id="infoTelefone">Carregando...</span></p>
+                                <p class="m-0"><strong>Senha: </strong> <span id="infoSenha">******</span></p>
+                            </div>
+
+                        </div>
+                    </div>
+                    
+                    <fieldset class="cards-informacoes mt-4 p-3 border rounded glass-card" style="border-color: rgba(255, 255, 255, 0.1) !important;">
+                        <legend class="card-titulo">Descrição</legend>
+                        <span id="infoDescricao">Carregando...</span>
+                    </fieldset>
                 </div>
             </div>
 
