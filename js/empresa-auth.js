@@ -689,11 +689,53 @@ document.addEventListener('DOMContentLoaded', () => {
             alert("Erro de conexão ao tentar encerrar a vaga.");
         }
     };
+
+    // INFORMAÇÕES DA EMPRESA
+
+    const empresaNome = document.getElementById('infoNome');
+    const empresaCnpj = document.getElementById('infoCNPJ');
+    const empresaTelefone = document.getElementById('infoTelefone');
+    const empresaDescricao = document.getElementById('infoDescricao');
+    const empresaEmail = document.getElementById('infoEmail');
+
+    if (empresaNome && empresaCnpj && empresaTelefone && empresaDescricao && empresaEmail) {
+        const empresaInformaçcoes = document.getElementById('empresaInfo');
+        if (empresaInformaçcoes) {
+            empresaInformaçcoes.addEventListener('click', async (e) => {
+                e.preventDefault(); 
+                try{
+                    const response = await fetch('https://talentflow-gfq3.onrender.com/empresas/informacoes/' + localStorage.getItem('codEmpresa'), {
+                        method: 'GET',
+                        headers: { 
+                            'Authorization': `Bearer ${localStorage.getItem('token')}` 
+                        }
+                    });
+
+                    if (response.ok) {
+                        const dadosEmpresa = await response.json();
+                        console.log("Dados da empresa recebidos:", dadosEmpresa);
+                        empresaNome.textContent = dadosEmpresa.nome || 'N/A';
+                        empresaCnpj.textContent = dadosEmpresa.cnpj || 'N/A';
+                        empresaTelefone.textContent = dadosEmpresa.contatoRecrutador || 'N/A';
+                        empresaDescricao.textContent = dadosEmpresa.descricao || 'N/A';
+                        empresaEmail.textContent = dadosEmpresa.emailCorporativo || 'N/A';
+                    } else {
+                        console.error("Resposta do servidor não OK:", response.status);
+                        alert("Erro ao carregar informações da empresa. Por favor, tente novamente.");
+                    }
+                }
+                catch(error){
+                    console.error("Erro ao validar token:", error);
+                    alert("Erro de conexão. Por favor, tente novamente.");
+                }
+            });
+
+        } else {
+            console.warn("Dados da empresa não encontrados no localStorage.");
+        }
+    } else {
+        console.warn("Elementos de informação da empresa não encontrados no DOM.");
+    }
+
+
 });
-
-try{
-
-}catch(error){
-    console.error("Erro geral no script:", error);
-    alert("Ocorreu um erro inesperado. Por favor, tente novamente mais tarde.");
-}
