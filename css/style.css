@@ -4,6 +4,7 @@
     --glass-bg: rgba(255, 255, 255, 0.1);
     --glass-border: rgba(255, 255, 255, 0.2);
     --accent-color: #ffffff;
+    --navbar-scrolled-bg: rgba(30, 60, 114, 0.9);
 }
 
 body {
@@ -23,7 +24,7 @@ body {
 }
 
 .navbar.scrolled {
-    background: rgba(30, 60, 114, 0.9);
+    background: var(--navbar-scrolled-bg);
     backdrop-filter: blur(10px);
     box-shadow: 0 4px 6px rgba(0,0,0,0.1);
 }
@@ -37,6 +38,36 @@ body {
 .nav-link:hover, .nav-link.active {
     color: #fff !important;
     font-weight: 600;
+}
+
+.tf-header-action-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    border: 1px solid rgba(13, 202, 240, 0.4);
+    background: rgba(13, 202, 240, 0.12);
+    color: #d9f7ff;
+    border-radius: 999px;
+    padding: 0.65rem 1rem;
+    transition: transform 0.2s ease, background 0.2s ease;
+}
+
+.tf-header-action-btn:hover {
+    background: rgba(13, 202, 240, 0.2);
+    color: #ffffff;
+    transform: translateY(-1px);
+}
+
+.tf-choice-card {
+    cursor: pointer;
+    text-align: center;
+}
+
+.tf-modal-glass {
+    background: rgba(255, 255, 255, 0.08);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(255, 255, 255, 0.12);
 }
 
 /* Hero Section */
@@ -175,6 +206,7 @@ body {
 
 /* Tema Candidato: Azul Marinho para Verde Água (Foco e Serenidade) */
 .bg-theme-candidato {
+    --navbar-scrolled-bg: rgba(15, 32, 39, 0.92);
     background: #0f2027; 
     background: linear-gradient(135deg, #0f2027 0%, #203a43 50%, #2c5364 100%);
     min-height: 100vh;
@@ -183,6 +215,7 @@ body {
 
 /* Tema Empresa: Escuro com toques de Vermelho/Borgonha (Corporativo) */
 .bg-theme-empresa {
+    --navbar-scrolled-bg: rgba(46, 1, 15, 0.92);
     background: #232526;
     background: linear-gradient(135deg, #1a1a1a 0%, #4a192c 100%); /* Preto para Borgonha */
     min-height: 100vh;

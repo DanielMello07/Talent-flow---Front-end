@@ -12,28 +12,7 @@
 </head>
 <body>
 
-    <nav class="navbar navbar-expand-lg navbar-dark fixed-top" id="mainNavbar">
-        <div class="container">
-            <a class="navbar-brand fw-bold" href="#"><i class="bi bi-diagram-3-fill me-2"></i>TalentFlow</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto align-items-center">
-                    <li class="nav-item"><a class="nav-link active" href="index.html">Início</a></li>
-                    <li class="nav-item"><a class="nav-link" href="vagas.html">Vagas</a></li>
-                    <li class="nav-item"><a class="nav-link" href="empresa-login.html">Empresas</a> </li>
-                    
-                    <li class="nav-item ms-lg-3">
-                        <a class="nav-link fw-bold" href="candidato-login.html">Login</a>
-                    </li>
-                    <li class="nav-item ms-lg-2">
-                        <a class="btn btn-light rounded-pill px-4 fw-bold shadow-sm" href="candidato-cadastro.html">Cadastre-se</a>
-                    </li>
-                </ul>
-            </div>
-        </div>
-    </nav>
+    <div data-tf-header data-context="public" data-active="home"></div>
 
     <header class="hero-section d-flex align-items-center text-center">
         <div class="container">
@@ -52,13 +31,13 @@
             <div class="row mt-5 pt-5 g-4">
                 <div class="col-md-4">
                     <a href="dashboard-candidato.html" class="text-decoration-none text-reset">
-                    <div class="glass-card p-4 h-100 text-start fade-in-up delay-100">
-                        <div class="icon-box mb-3">
-                            <i class="bi bi-person-badge"></i>
+                        <div class="glass-card p-4 h-100 text-start fade-in-up delay-100">
+                            <div class="icon-box mb-3">
+                                <i class="bi bi-person-badge"></i>
+                            </div>
+                            <h3 class="h4 fw-bold">Para Candidatos</h3>
+                            <p class="small text-white-50">Encontre vagas alinhadas ao seu perfil, candidate-se e acompanhe sua evolução profissional.</p>
                         </div>
-                        <h3 class="h4 fw-bold">Para Candidatos</h3>
-                        <p class="small text-white-50">Encontre vagas alinhadas ao seu perfil, candidate-se e acompanhe sua evolução profissional.</p>
-                    </div>
                     </a>
                 </div>
 
@@ -75,7 +54,6 @@
                 </div>
 
                 <div class="col-md-4">
-                    <a >
                     <div class="glass-card p-4 h-100 text-start fade-in-up delay-300">
                         <div class="icon-box mb-3">
                             <i class="bi bi-infinity"></i>
@@ -83,7 +61,6 @@
                         <h3 class="h4 fw-bold">Fluxo Contínuo</h3>
                         <p class="small text-white-50">Uma experiência fluida e moderna que promove o crescimento de ambas as partes.</p>
                     </div>
-                    </a>
                 </div>
             </div>
         </div>
@@ -91,11 +68,12 @@
 
     <footer class="text-center py-4 text-white-50">
         <div class="container">
-            <small>TalentFlow &copy; 2025 — Criando conexões que transformam futuros.</small>
+            <small>TalentFlow &copy; 2025 - Criando conexões que transformam futuros.</small>
         </div>
     </footer>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="js/cabecalho.js"></script>
     <script src="js/script.js"></script>
 </body>
 </html>

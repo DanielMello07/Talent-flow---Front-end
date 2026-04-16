@@ -84,7 +84,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 if (response.ok) {
                     alert('Empresa cadastrada com sucesso! Faça login.');
-                    window.location.reload(); 
+                    window.location.href = 'empresa-login.html';
                 } else {
                     alert('Erro ao cadastrar empresa.');
                 }
@@ -519,6 +519,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if(!modalEl) return;
 
             window.vagaSelecionadaObj = vaga; // Guardamos o objeto completo
+            window.vagaSelecionada = vaga.codVaga;
 
             // Preenche o modal em modo de exibição
             document.getElementById('detalheTitulo').innerHTML = `<span>${vaga.titulo}</span>`;
